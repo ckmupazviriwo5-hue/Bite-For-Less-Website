@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bite For Less — rescuing food, one bite at a time.">
+    <title>Bite For Less | Rescuing Food, One Bite at a Time</title>
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+
+    <style>
+        :root {
+            --primary: #ff9800;
+            --primary-dark: #e68900;
+            --accent: #ff9800;
+            --accent-light: #ffb733;
+            --bg-light: #080808;
+            --surface: #111111;
+            --surface-2: #171717;
+            --text-dark: #ffffff;
+            --text-soft: #e9e9e9;
+            --muted: #a8a8a8;
+            --border: #2a2a2a;
+            --success: #ff9800;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(255, 152, 0, .09), transparent 32rem),
+                var(--bg-light);
+            color: var(--text-dark);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        body::selection {
+            background: var(--primary);
+            color: #000;
+        }
+
+        button, input, select, textarea { font: inherit; }
+
+        button:focus-visible, a:focus-visible,
+        input:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 3px solid rgba(255, 152, 0, .45);
+            outline-offset: 3px;
+        }
+
+        header {
+            background: rgba(8, 8, 8, .92);
+            border-bottom: 1px solid rgba(255, 152, 0, .14);
+            padding: .85rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(14px);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            color: #fff;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .brand-mark {
+            width: 52px;
+            height: 34px;
+            display: block;
+            flex: 0 0 auto;
+        }
+
+        .brand-bite { fill: #fff; }
+        .brand-eye { fill: #111; }
+        .brand-mouth { fill: #111; }
+        .brand-burger-top,
+        .brand-burger-fill,
+        .brand-burger-bottom { fill: var(--primary); }
+
+        .brand-text {
+            font-size: 1.18rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+
+        .brand-text strong { color: var(--primary); }
+
+        nav {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-soft);
+            font-weight: 650;
+            font-size: .94rem;
+            transition: color .2s ease;
+        }
+
+        nav a:hover { color: var(--primary); }
+
+        .hero {
+            text-align: center;
+            padding: 5.5rem 1rem 5rem;
+            min-height: 470px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(255, 152, 0, .13), transparent 16rem),
+                linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero::before {
+            content: "";
+            width: 84px;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--primary);
+            margin-bottom: 1.6rem;
+            box-shadow: 0 0 24px rgba(255, 152, 0, .45);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.25rem, 6vw, 4rem);
+            margin: .9rem 0 .75rem;
+            line-height: 1.08;
+            letter-spacing: -.045em;
+            max-width: 900px;
+        }
+
+        .hero h1::first-letter { color: var(--primary); }
+
+        .hero p {
+            max-width: 720px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 152, 0, .1);
+            border: 1px solid rgba(255, 152, 0, .38);
+            color: var(--primary);
+            padding: .4rem .9rem;
+            border-radius: 999px;
+            font-size: .82rem;
+            font-weight: 800;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: min(92%, 1200px);
+            margin: 3.5rem auto;
+        }
+
+        .section-title {
+            margin: 0 0 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+            padding-bottom: .25rem;
+            color: #fff;
+            letter-spacing: -.02em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.35rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: linear-gradient(180deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 152, 0, .45);
+            box-shadow: 0 16px 40px rgba(0,0,0,.45);
+        }
+
+        .card img {
+            width: 100%;
+            height: 190px;
+            display: block;
+            object-fit: cover;
+            filter: saturate(.9);
+        }
+
+        .card-body { padding: 1.2rem; }
+
+        .vendor-name {
+            font-size: .78rem;
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .item-title {
+            font-size: 1.18rem;
+            font-weight: 750;
+            margin: .2rem 0;
+            color: #fff;
+        }
+
+        .pricing {
+            display: flex;
+            align-items: baseline;
+            gap: .5rem;
+            margin: .65rem 0;
+        }
+
+        .current-price {
+            font-size: 1.45rem;
+            font-weight: 850;
+            color: var(--primary);
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #777;
+            font-size: .9rem;
+        }
+
+        .timer {
+            color: var(--accent-light);
+            font-weight: 700;
+            font-size: .85rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: .78rem 1rem;
+            border: 0;
+            border-radius: 9px;
+            background: var(--primary);
+            color: #080808;
+            font-weight: 850;
+            cursor: pointer;
+            transition: background .2s ease, transform .1s ease, box-shadow .2s ease;
+        }
+
+        .btn:hover {
+            background: var(--accent-light);
+            box-shadow: 0 8px 22px rgba(255, 152, 0, .18);
+        }
+
+        .btn:active { transform: scale(.99); }
+
+        .btn:disabled {
+            background: #3a3a3a;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .reviews-section {
+            background: linear-gradient(180deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .review-card {
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+
+        .review-card:last-child { border-bottom: 0; }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            font-weight: 700;
+        }
+
+        .stars { color: var(--primary); white-space: nowrap; }
+
+        .review-form {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+        }
+
+        .review-form input,
+        .review-form textarea,
+        .review-form select {
+            width: 100%;
+            padding: .75rem;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 9px;
+        }
+
+        .review-form input::placeholder,
+        .review-form textarea::placeholder { color: #777; }
+
+        .review-form input:focus,
+        .review-form textarea:focus,
+        .review-form select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, .08);
+            outline: none;
+        }
+
+        .review-form textarea { resize: vertical; }
+
+        .empty-reviews { color: var(--muted); padding: 1rem 0; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            background: rgba(0,0,0,.78);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.is-open { display: flex; }
+
+        .modal {
+            background: #111;
+            border: 1px solid rgba(255, 152, 0, .35);
+            padding: 2rem;
+            border-radius: var(--radius);
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 70px rgba(0,0,0,.6);
+        }
+
+        .modal h2 { color: #fff; }
+
+        #qrcode {
+            margin: 1.5rem auto;
+            display: flex;
+            justify-content: center;
+            min-height: 160px;
+        }
+
+        .pin-display {
+            background: #080808;
+            border: 1px solid #2d2d2d;
+            color: var(--primary);
+            padding: .5rem;
+            font-size: 1.5rem;
+            font-weight: 850;
+            letter-spacing: 4px;
+            border-radius: 7px;
+            margin-bottom: 1rem;
+        }
+
+        .btn-close {
+            background: #2d2d2d;
+            color: #fff;
+            margin-top: .5rem;
+        }
+
+        .btn-close:hover { background: #444; box-shadow: none; }
+
+        @media (max-width: 650px) {
+            header { align-items: center; }
+            .brand-mark { width: 47px; height: 31px; }
+            .brand-text { font-size: 1rem; }
+            nav { justify-content: flex-end; gap: .7rem; }
+            nav a { font-size: .82rem; }
+            .hero { padding: 4.5rem 1rem 4rem; min-height: 430px; }
+            .hero h1 { font-size: clamp(2rem, 11vw, 3rem); }
+            .reviews-section { padding: 1.25rem; }
+            .review-header { flex-direction: column; gap: .25rem; }
+        }
+
+        @media (max-width: 460px) {
+            header { padding: .75rem 4%; }
+            .brand-text { display: none; }
+            nav { gap: .6rem; }
+            nav a { font-size: .78rem; }
+            .container { width: 92%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { transition: none !important; }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="#" aria-label="Bite For Less home">
+            <svg class="brand-mark" viewBox="0 0 120 72" role="img" aria-label="Bite For Less logo">
+                <path class="brand-bite" d="M20 11c18 0 31 12 31 28v9c0 7-5 12-12 12H20c-4 0-7-3-7-7V30c0-11 0-19 7-19Z"/>
+                <circle class="brand-eye" cx="31" cy="27" r="2.6"/>
+                <path class="brand-mouth" d="M47 35l9-6v12l-9-6Z"/>
+                <path class="brand-burger-top" d="M65 27c3-8 13-11 25-11h8c12 0 21 3 24 11H65Z"/>
+                <rect class="brand-burger-fill" x="65" y="31" width="57" height="10" rx="5"/>
+                <path class="brand-burger-bottom" d="M67 45h54c-4 8-13 11-27 11s-23-3-27-11Z"/>
+            </svg>
+            <span class="brand-text">Bite for <strong>Less</strong></span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="#deals">Flash Deals</a>
+            <a href="#reviews">Community Reviews</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="hero-title">
+            <span class="badge">1–2 Hour Flash Window</span>
+            <h1 id="hero-title">Save Surplus Food, Save Money</h1>
+            <p>
+                Rescuing Food, One Bite at a Time.<br>
+                Connecting small bakeries, markets, and shops with students and local community members.
+            </p>
+        </section>
+
+        <div class="container" id="deals">
+            <h2 class="section-title">Active End-of-Day Listings</h2>
+
+            <div class="grid" id="foodGrid">
+                <article class="card"
+                    data-item="Assorted Artisanal Breads"
+                    data-vendor="Corner Street Bakery">
+                    <img
+                        src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80"
+                        alt="Assorted fresh bakery breads"
+                        loading="lazy">
+                    <div class="card-body">
+                        <div class="vendor-name">Corner Street Bakery</div>
+                        <div class="item-title">Assorted Artisanal Breads</div>
+                        <div class="pricing">
+                            <span class="current-price">$2.50</span>
+                            <span class="old-price">$10.00</span>
+                        </div>
+                        <div class="timer" data-minutes="42" aria-live="polite">
+                            ⏰ Shop closes in <span class="time-value">42 mins</span>
+                        </div>
+                        <button class="btn reserve-btn" type="button">
+                            Reserve &amp; Get QR
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card"
+                    data-item="Organic Veggie Box"
+                    data-vendor="Green Grocers Market">
+                    <img
+                        src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=700&q=80"
+                        alt="Fresh organic vegetables in a box"
+                        loading="lazy">
+                    <div class="card-body">
+                        <div class="vendor-name">Green Grocers Market</div>
+                        <div class="item-title">Surplus Organic Veggie Box</div>
+                        <div class="pricing">
+                            <span class="current-price">$3.00</span>
+                            <span class="old-price">$12.00</span>
+                        </div>
+                        <div class="timer" data-minutes="70" aria-live="polite">
+                            ⏰ Shop closes in <span class="time-value">1 hr 10 mins</span>
+                        </div>
+                        <button class="btn reserve-btn" type="button">
+                            Reserve &amp; Get QR
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card"
+                    data-item="Hot Lunch Surplus Box"
+                    data-vendor="Campus Express Deli">
+                    <img
+                        src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=700&q=80"
+                        alt="Prepared hot lunch meal"
+                        loading="lazy">
+                    <div class="card-body">
+                        <div class="vendor-name">Campus Express Deli</div>
+                        <div class="item-title">Hot Lunch Buffet Surplus Box</div>
+                        <div class="pricing">
+                            <span class="current-price">FREE</span>
+                            <span class="old-price">$8.50</span>
+                        </div>
+                        <div class="timer" data-minutes="18" aria-live="polite">
+                            ⏰ Shop closes in <span class="time-value">18 mins</span>
+                        </div>
+                        <button class="btn reserve-btn" type="button">
+                            Reserve &amp; Get QR
+                        </button>
+                    </div>
+                </article>
+            </div>
+
+            <section class="reviews-section" id="reviews" aria-labelledby="reviews-title">
+                <h2 class="section-title" id="reviews-title">Community Feedback</h2>
+
+                <div id="reviews-list">
+                    <article class="review-card">
+                        <div class="review-header">
+                            <span>Sarah M. (Student Hostel)</span>
+                            <span class="stars" aria-label="5 out of 5 stars">★★★★★</span>
+                        </div>
+                        <p>"Got a huge bag of fresh rolls for under $3 right before closing. The QR verification took 5 seconds at the counter!"</p>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-header">
+                            <span>David K. (Local Resident)</span>
+                            <span class="stars" aria-label="4 out of 5 stars">★★★★☆</span>
+                        </div>
+                        <p>"Great app for finding deals. I prefer choosing my actual items rather than mystery bags like other platforms."</p>
+                    </article>
+                </div>
+
+                <form class="review-form" id="reviewForm">
+                    <h3>Leave a Review</h3>
+
+                    <label for="reviewerName">Your name or shelter/group</label>
+                    <input
+                        type="text"
+                        id="reviewerName"
+                        maxlength="60"
+                        placeholder="Your Name or Shelter/Group"
+                        required>
+
+                    <label for="reviewerRating">Rating</label>
+                    <select id="reviewerRating">
+                        <option value="5">5 Stars - Excellent</option>
+                        <option value="4">4 Stars - Good</option>
+                        <option value="3">3 Stars - Average</option>
+                        <option value="2">2 Stars - Poor</option>
+                        <option value="1">1 Star - Very Poor</option>
+                    </select>
+
+                    <label for="reviewText">Your review</label>
+                    <textarea
+                        id="reviewText"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Share your experience..."
+                        required></textarea>
+
+                    <button type="submit" class="btn">Submit Review</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+
+    <footer style="text-align:center; padding:0 1rem 2.5rem; color:#777; font-size:.82rem;">
+        <span style="color:#fff; font-weight:700;">Bite for <span style="color:#ff9800;">Less</span></span>
+        <span aria-hidden="true"> · </span>
+        Rescuing Food, One Bite at a Time
+    </footer>
+
+    <div
+        class="modal-overlay"
+        id="qrModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalItem"
+        aria-hidden="true">
+
+        <div class="modal">
+            <h2 id="modalItem">Item Reserved!</h2>
+            <p id="modalVendor" style="color:#aaa; font-size:.9rem;"></p>
+
+            <div id="qrcode" aria-label="Reservation QR code"></div>
+
+            <p style="font-size:.85rem; color:#aaa;">Verification PIN:</p>
+            <div class="pin-display" id="modalPin">----</div>
+
+            <p style="font-size:.8rem; color:var(--accent); font-weight:700;">
+                Present this QR code or PIN to the shop associate at pickup.
+            </p>
+
+            <button class="btn btn-close" id="closeModalBtn" type="button">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        "use strict";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("qrModal");
+            const closeModalBtn = document.getElementById("closeModalBtn");
+            const qrContainer = document.getElementById("qrcode");
+            const modalItem = document.getElementById("modalItem");
+            const modalVendor = document.getElementById("modalVendor");
+            const modalPin = document.getElementById("modalPin");
+            const reviewForm = document.getElementById("reviewForm");
+            const reviewsList = document.getElementById("reviews-list");
+
+            let previousFocusedElement = null;
+            let timerInterval;
+
+            function generatePin() {
+                return String(Math.floor(1000 + Math.random() * 9000));
+            }
+
+            function openReservation(itemName, vendorName) {
+                if (typeof QRCode === "undefined") {
+                    alert("The QR code library could not be loaded. Please check your internet connection and try again.");
+                    return;
+                }
+
+                previousFocusedElement = document.activeElement;
+
+                const pin = generatePin();
+
+                modalItem.textContent = itemName;
+                modalVendor.textContent = `Vendor: ${vendorName}`;
+                modalPin.textContent = pin;
+                qrContainer.innerHTML = "";
+
+                new QRCode(qrContainer, {
+                    text: `BITE_LESS_RESERVATION|${itemName}|${vendorName}|PIN:${pin}`,
+                    width: 160,
+                    height: 160,
+                    colorDark: "#ff9800",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                modal.classList.add("is-open");
+                modal.setAttribute("aria-hidden", "false");
+                closeModalBtn.focus();
+            }
+
+            function closeModal() {
+                modal.classList.remove("is-open");
+                modal.setAttribute("aria-hidden", "true");
+                qrContainer.innerHTML = "";
+                previousFocusedElement?.focus();
+            }
+
+            document.querySelectorAll(".reserve-btn").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const card = button.closest(".card");
+                    openReservation(card.dataset.item, card.dataset.vendor);
+                });
+            });
+
+            closeModalBtn.addEventListener("click", closeModal);
+
+            modal.addEventListener("click", (event) => {
+                if (event.target === modal) closeModal();
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape" && modal.classList.contains("is-open")) {
+                    closeModal();
+                }
+            });
+
+            // Countdown timers are based on the initial values in data-minutes.
+            const timerElements = document.querySelectorAll(".timer");
+            timerElements.forEach((timer) => {
+                let remainingSeconds = Number(timer.dataset.minutes) * 60;
+                const valueElement = timer.querySelector(".time-value");
+
+                const updateTimer = () => {
+                    const minutes = Math.floor(remainingSeconds / 60);
+                    const seconds = remainingSeconds % 60;
+
+                    if (remainingSeconds <= 0) {
+                        valueElement.textContent = "closed";
+                        timer.style.color = "#b00020";
+                        timer.closest(".card").querySelector(".reserve-btn").disabled = true;
+                        timer.closest(".card").querySelector(".reserve-btn").textContent = "Deal Closed";
+                        return;
+                    }
+
+                    if (minutes >= 60) {
+                        const hours = Math.floor(minutes / 60);
+                        const mins = minutes % 60;
+                        valueElement.textContent = `${hours} hr${hours !== 1 ? "s" : ""} ${mins} min${mins !== 1 ? "s" : ""}`;
+                    } else {
+                        valueElement.textContent = `${minutes} min${minutes !== 1 ? "s" : ""} ${String(seconds).padStart(2, "0")} sec`;
+                    }
+
+                    remainingSeconds--;
+                };
+
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            });
+
+            reviewForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                const name = document.getElementById("reviewerName").value.trim();
+                const rating = Number(document.getElementById("reviewerRating").value);
+                const text = document.getElementById("reviewText").value.trim();
+
+                if (!name || !text || rating < 1 || rating > 5) return;
+
+                // textContent is deliberately used instead of innerHTML.
+                // This prevents user-submitted HTML/JavaScript from being injected.
+                const reviewCard = document.createElement("article");
+                reviewCard.className = "review-card";
+
+                const header = document.createElement("div");
+                header.className = "review-header";
+
+                const nameElement = document.createElement("span");
+                nameElement.textContent = name;
+
+                const starsElement = document.createElement("span");
+                starsElement.className = "stars";
+                starsElement.setAttribute("aria-label", `${rating} out of 5 stars`);
+                starsElement.textContent = "★".repeat(rating) + "☆".repeat(5 - rating);
+
+                const paragraph = document.createElement("p");
+                paragraph.textContent = `"${text}"`;
+
+                header.append(nameElement, starsElement);
+                reviewCard.append(header, paragraph);
+                reviewsList.appendChild(reviewCard);
+
+                reviewForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
