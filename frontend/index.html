@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Bite For Less helps customers discover discounted surplus food from local shops while helping businesses reduce food waste." />
+  <meta property="og:title" content="Bite For Less" />
+  <meta property="og:description" content="Save Money. Rescue Food." />
+  <meta property="og:type" content="website" />
+  <title>Bite For Less | Food Surplus Marketplace</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'%3E%3Crect width='100' height='60' rx='10' fill='%23070707'/%3E%3Cpath d='M16 16c12 0 20 8 20 18v8c0 4-3 7-7 7H16c-7 0-12-5-12-12V28c0-7 6-12 12-12Z' fill='%23ff9800'/%3E%3Ccircle cx='25' cy='28' r='3' fill='%23070707'/%3E%3Cpath d='M44 27h30c0 9-8 17-18 17S44 36 44 27Z' fill='%23ff9800'/%3E%3Crect x='40' y='28' width='42' height='8' rx='4' fill='%23ff9800'/%3E%3C/svg%3E" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav-wrap">
+      <a href="#" class="brand" aria-label="Bite For Less homepage">
+        <span class="brand-mark">B</span>
+        <span class="brand-name">Bite for <strong>Less</strong></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#deals">Browse Deals</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#impact">Impact</a>
+        <a href="#apply">Join as Shop</a>
+        <button class="btn btn-ghost" id="loginNavBtn" type="button">Login</button>
+        <button class="btn btn-primary" id="signupNavBtn" type="button">Sign Up</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow">1–2 hour flash deals</span>
+          <h1>Save Money. Rescue Food.</h1>
+          <p>Great food shouldn’t go to waste. Browse local deals, reserve in minutes, and pick up a discounted meal or grocery rescue before it expires.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#deals">Browse Flash Deals</a>
+            <a class="btn btn-secondary" href="#apply">Join as a Shop</a>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="Featured food rescue summary">
+          <div class="mini-stat">
+            <span class="label">Meals saved</span>
+            <strong id="heroMeals">2,400+</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="label">Shops active</span>
+            <strong>86</strong>
+          </div>
+          <div class="mini-stat highlight">
+            <span class="label">This week</span>
+            <strong>42% average discount</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deals" class="container section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Featured today</span>
+          <h2>Ending Soon</h2>
+        </div>
+        <div class="filter-bar" aria-label="Deal filters">
+          <select id="dealCategoryFilter">
+            <option value="all">All categories</option>
+            <option value="Bakery">Bakery</option>
+            <option value="Restaurant">Restaurant</option>
+            <option value="Grocery">Grocery</option>
+            <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+            <option value="Meals">Meals</option>
+            <option value="Drinks">Drinks</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div id="dealGrid" class="deal-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="how-it-works" class="container section">
+      <span class="eyebrow">How it works</span>
+      <h2>Simple, fast, and community-powered</h2>
+      <div class="steps-grid">
+        <article class="info-card">
+          <span class="step-number">1</span>
+          <h3>Find a deal</h3>
+          <p>Browse food rescues from local bakeries, restaurants, and markets.</p>
+        </article>
+        <article class="info-card">
+          <span class="step-number">2</span>
+          <h3>Reserve it</h3>
+          <p>Secure your pickup before the timer ends with a simple reservation.</p>
+        </article>
+        <article class="info-card">
+          <span class="step-number">3</span>
+          <h3>Get your QR + PIN</h3>
+          <p>Receive a confirmation with a secure QR code and pickup code.</p>
+        </article>
+        <article class="info-card">
+          <span class="step-number">4</span>
+          <h3>Pick it up</h3>
+          <p>Show the QR or PIN, collect your food, and enjoy the discount.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="container section">
+      <span class="eyebrow">Why Bite For Less?</span>
+      <h2>Built for people and local businesses</h2>
+      <div class="feature-grid">
+        <article class="feature-box">
+          <h3>Save money</h3>
+          <p>Get fresh food for a fraction of the usual price before it expires.</p>
+        </article>
+        <article class="feature-box">
+          <h3>Reduce waste</h3>
+          <p>Help stop surplus food from being thrown away while supporting local shops.</p>
+        </article>
+        <article class="feature-box">
+          <h3>Support local</h3>
+          <p>Discover new bakeries, markets, and restaurants around your area.</p>
+        </article>
+        <article class="feature-box">
+          <h3>Stretch your budget</h3>
+          <p>Save on groceries and meals without compromising on quality or freshness.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="impact" class="impact-section">
+      <div class="container section">
+        <span class="eyebrow">Our impact</span>
+        <h2>Every rescued item matters</h2>
+        <div class="impact-grid">
+          <div><strong>2,400+</strong><span>Meals rescued</span></div>
+          <div><strong>8,600</strong><span>Food items saved</span></div>
+          <div><strong>86</strong><span>Shops participating</span></div>
+          <div><strong>1,520</strong><span>Customers served</span></div>
+          <div><strong>6.8 t</strong><span>Food waste reduced</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container section">
+      <span class="eyebrow">Community reviews</span>
+      <h2>Real feedback from rescued food shoppers</h2>
+      <div id="landingReviews" class="review-grid"></div>
+    </section>
+
+    <section id="apply" class="container section application-shell">
+      <div class="application-copy">
+        <span class="eyebrow">For business owners</span>
+        <h2>Join as a shop</h2>
+        <p>List your surplus food as a limited-time flash deal, reduce waste, and reach local shoppers before closing time.</p>
+        <ul class="check-list">
+          <li>Approve and publish flash deals</li>
+          <li>Track reservations in real time</li>
+          <li>Verify QR pickup at the counter</li>
+        </ul>
+      </div>
+      <form id="shopApplicationForm" class="form-card">
+        <h3>Apply for approval</h3>
+        <label>
+          Shop name
+          <input type="text" name="shop_name" required />
+        </label>
+        <label>
+          Owner name
+          <input type="text" name="owner_name" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          Phone
+          <input type="tel" name="phone" required />
+        </label>
+        <label>
+          Address
+          <input type="text" name="address" required />
+        </label>
+        <label>
+          Business info
+          <textarea name="business_info" rows="3" required></textarea>
+        </label>
+        <button class="btn btn-primary" type="submit">Send application</button>
+        <div id="shopApplicationStatus" class="status-banner" role="status"></div>
+      </form>
+    </section>
+
+    <section id="dashboardSection" class="container section dashboard-section hidden" aria-live="polite">
+      <div id="dashboardContent"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div>
+        <strong>Bite for <span>Less</span></strong>
+        <p>Rescuing food, one bite at a time.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#deals">Deals</a>
+        <a href="#impact">Impact</a>
+        <a href="#apply">Join a Shop</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="authModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="modalCloseBtn" type="button" aria-label="Close login modal">×</button>
+      <div class="auth-tabs" role="tablist" aria-label="Authentication tabs">
+        <button class="tab is-active" type="button" data-auth-tab="customer-login">Customer Login</button>
+        <button class="tab" type="button" data-auth-tab="customer-signup">Sign Up</button>
+        <button class="tab" type="button" data-auth-tab="shop-login">Shop Owner Login</button>
+        <button class="tab" type="button" data-auth-tab="admin-login">Admin Login</button>
+      </div>
+
+      <section class="auth-panel is-active" id="customer-login">
+        <form id="customerLoginForm" class="stack-form">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <button class="btn btn-primary" type="submit">Login</button>
+          <div class="status-banner" id="customerLoginStatus" role="status"></div>
+          <small class="status-banner">Demo customer: customer@example.com / password123</small>
+        </form>
+      </section>
+
+      <section class="auth-panel" id="customer-signup">
+        <form id="customerSignupForm" class="stack-form">
+          <label>Name<input type="text" name="name" required /></label>
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Phone<input type="tel" name="phone" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <button class="btn btn-primary" type="submit">Create Account</button>
+          <div class="status-banner" id="customerSignupStatus" role="status"></div>
+        </form>
+      </section>
+
+      <section class="auth-panel" id="shop-login">
+        <form id="shopLoginForm" class="stack-form">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <button class="btn btn-primary" type="submit">Shop Login</button>
+          <div class="status-banner" id="shopLoginStatus" role="status"></div>
+          <small class="status-banner">Demo shop owner: shopowner@example.com / password123</small>
+        </form>
+      </section>
+
+      <section class="auth-panel" id="admin-login">
+        <form id="adminLoginForm" class="stack-form">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <button class="btn btn-primary" type="submit">Admin Login</button>
+          <div class="status-banner" id="adminLoginStatus" role="status"></div>
+          <small class="status-banner">Demo admin: admin@biteforless.app / admin123</small>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script src="./js/app.js" type="module"></script>
+</body>
+</html>

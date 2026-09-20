@@ -341,6 +341,64 @@
 
         .empty-reviews { color: var(--muted); padding: 1rem 0; }
 
+        .view { display: none; }
+        .view.is-active { display: block; }
+
+        .admin-shell {
+            display: grid;
+            grid-template-columns: minmax(240px, .8fr) minmax(0, 1.4fr);
+            gap: 1.35rem;
+            align-items: start;
+        }
+
+        .admin-panel {
+            background: linear-gradient(180deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.35rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .admin-panel h3 { margin-top: 0; }
+        .admin-kicker { color: var(--primary); font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+        .admin-form { display: grid; gap: .8rem; }
+        .admin-form input, .admin-form select {
+            width: 100%; padding: .75rem; background: #0a0a0a; color: #fff;
+            border: 1px solid #333; border-radius: 9px;
+        }
+        .admin-form input:focus, .admin-form select:focus { border-color: var(--primary); outline: none; }
+        .admin-form small, .admin-note { color: var(--muted); font-size: .82rem; }
+        .admin-status { min-height: 1.4rem; color: var(--accent-light); font-size: .88rem; }
+        .deal-row {
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+            border-bottom: 1px solid var(--border); padding: .85rem 0;
+        }
+        .deal-row:last-child { border-bottom: 0; }
+        .deal-row strong { display: block; }
+        .deal-row small { color: var(--muted); }
+        .btn-danger { width: auto; padding: .5rem .75rem; background: #7d241d; color: #fff; }
+        .btn-danger:hover { background: #a83227; }
+        .nav-action { color: var(--primary) !important; }
+
+        .application-grid { max-width: 700px; margin: 0 auto; }
+        .application-success { border-color: rgba(255, 152, 0, .5); }
+        .approval-row { align-items: flex-start; }
+        .approval-actions { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+        .btn-success, .btn-danger { width: auto; padding: .5rem .75rem; color: #fff; }
+        .btn-success { background: #397044; }
+        .btn-success:hover { background: #4d905b; }
+        .auth-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin: 1rem 0 1.35rem; }
+        .auth-options .btn { background: #2d2d2d; color: #fff; }
+        .auth-options .btn.is-selected, .auth-options .btn:hover { background: var(--primary); color: #080808; }
+        .auth-panel[hidden] { display: none; }
+        .forgot-link { display: inline-block; margin-top: .8rem; color: var(--primary); font-size: .88rem; cursor: pointer; }
+        .recovery-panel { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .prototype-warning { color: var(--accent-light); font-size: .8rem; }
+
+        @media (max-width: 760px) {
+            .admin-shell { grid-template-columns: 1fr; }
+        }
+
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -441,7 +499,10 @@
         </a>
         <nav aria-label="Main navigation">
             <a href="#deals">Flash Deals</a>
-            <a href="#reviews">Community Reviews</a>
+            <a href="#reviews">Ratings</a>
+            <a class="nav-action" href="#apply">Join as a Shop</a>
+            <a class="nav-action" href="#admin">Login</a>
+            <a href="#admin-control">Admin</a>
         </nav>
     </header>
 
@@ -455,7 +516,8 @@
             </p>
         </section>
 
-        <div class="container" id="deals">
+        <div class="container view is-active" id="home-view" data-view="home">
+            <div id="deals">
             <h2 class="section-title">Active End-of-Day Listings</h2>
 
             <div class="grid" id="foodGrid">
@@ -528,7 +590,10 @@
                     </div>
                 </article>
             </div>
+            </div>
+        </div>
 
+        <div class="container view" id="reviews-view" data-view="reviews">
             <section class="reviews-section" id="reviews" aria-labelledby="reviews-title">
                 <h2 class="section-title" id="reviews-title">Community Feedback</h2>
 
@@ -582,6 +647,139 @@
                 </form>
             </section>
         </div>
+
+        <div class="container view" id="admin-view" data-view="admin">
+            <h2 class="section-title">Login</h2>
+            <div id="admin-login" class="admin-panel">
+                <div class="admin-kicker">Welcome back</div>
+                <h3>Choose how you want to continue</h3>
+                <div class="auth-options" role="group" aria-label="Account options">
+                    <button class="btn is-selected auth-option" data-panel="signin-panel" type="button">Sign in</button>
+                    <button class="btn auth-option" data-panel="client-signup-panel" type="button">Sign up as client</button>
+                    <a class="btn" href="#apply">Sign up as shop owner</a>
+                </div>
+                <div class="auth-panel" id="signin-panel">
+                    <p class="admin-note">Approved owners can sign in here. Demo owner: <strong>owner@biteforless.test</strong> / <strong>demo123</strong>.</p>
+                    <form class="admin-form" id="loginForm">
+                    <label for="loginEmail">Email address</label>
+                    <input id="loginEmail" type="email" autocomplete="username" required placeholder="owner@biteforless.test">
+                    <label for="loginPassword">Password</label>
+                    <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="demo123">
+                    <button class="btn" type="submit">Log in</button>
+                    <div class="admin-status" id="loginStatus" role="status"></div>
+                    </form>
+                </div>
+                <div class="auth-panel" id="client-signup-panel" hidden>
+                    <p class="admin-note">Create a client account to discover and reserve surplus food.</p>
+                    <form class="admin-form" id="clientSignupForm">
+                        <label for="clientName">Full name</label>
+                        <input id="clientName" required maxlength="70" placeholder="Your name">
+                        <label for="clientEmail">Email address</label>
+                        <input id="clientEmail" type="email" required maxlength="120" placeholder="you@example.com">
+                        <label for="clientPassword">Password</label>
+                        <input id="clientPassword" type="password" required minlength="6" maxlength="80" placeholder="At least 6 characters">
+                        <button class="btn" type="submit">Create client account</button>
+                        <div class="admin-status" id="clientSignupStatus" role="status"></div>
+                    </form>
+                </div>
+            </div>
+            <div id="admin-dashboard" hidden>
+                <div class="admin-shell">
+                    <section class="admin-panel">
+                        <div class="admin-kicker">New listing</div>
+                        <h3>Publish a flash sale</h3>
+                        <form class="admin-form" id="dealForm">
+                            <label for="dealShop">Shop name</label>
+                            <input id="dealShop" required maxlength="50" placeholder="Your shop">
+                            <label for="dealName">Food item</label>
+                            <input id="dealName" required maxlength="70" placeholder="Surplus pastry box">
+                            <label for="dealPrice">Sale price</label>
+                            <input id="dealPrice" required maxlength="12" placeholder="$3.00">
+                            <label for="dealOldPrice">Original price</label>
+                            <input id="dealOldPrice" required maxlength="12" placeholder="$12.00">
+                            <label for="dealImage">Image URL</label>
+                            <input id="dealImage" type="url" required placeholder="https://..."><small>Use a public image URL for this prototype.</small>
+                            <label for="dealExpiry">Sale ends</label>
+                            <input id="dealExpiry" type="datetime-local" required>
+                            <button class="btn" type="submit">Publish flash sale</button>
+                            <div class="admin-status" id="dealStatus" role="status"></div>
+                        </form>
+                    </section>
+                    <section class="admin-panel">
+                        <div class="admin-kicker">Live inventory</div>
+                        <h3>Your published deals</h3>
+                        <div id="admin-deals-list"></div>
+                        <button class="btn btn-close" id="logoutBtn" type="button">Log out</button>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="container view" id="apply-view" data-view="apply">
+            <section class="reviews-section application-grid" aria-labelledby="apply-title">
+                <div class="admin-kicker">Shop partner programme</div>
+                <h2 class="section-title" id="apply-title">Apply as a Shop Owner</h2>
+                <p class="admin-note">Tell us about your shop. An admin will review your application before you can publish flash sales.</p>
+                <form class="admin-form" id="applicationForm">
+                    <label for="applicationShop">Shop name</label>
+                    <input id="applicationShop" required maxlength="70" placeholder="Corner Street Bakery">
+                    <label for="applicationOwner">Your full name</label>
+                    <input id="applicationOwner" required maxlength="70" placeholder="Your name">
+                    <label for="applicationEmail">Business email</label>
+                    <input id="applicationEmail" type="email" required maxlength="120" placeholder="you@yourshop.com">
+                    <label for="applicationPassword">Create a password</label>
+                    <input id="applicationPassword" type="password" required minlength="6" maxlength="80" placeholder="At least 6 characters">
+                    <label for="applicationPhone">Phone number</label>
+                    <input id="applicationPhone" type="tel" required maxlength="30" placeholder="Your contact number">
+                    <label for="applicationAddress">Shop address</label>
+                    <input id="applicationAddress" required maxlength="140" placeholder="Street, town or campus">
+                    <label for="applicationMessage">About your shop</label>
+                    <textarea id="applicationMessage" rows="4" maxlength="500" placeholder="What food would you like to rescue through Bite For Less?" required></textarea>
+                    <button class="btn" type="submit">Send application</button>
+                    <div class="admin-status" id="applicationStatus" role="status"></div>
+                </form>
+            </section>
+        </div>
+
+        <div class="container view" id="admin-control-view" data-view="admin-control">
+            <h2 class="section-title">Admin Approval Centre</h2>
+            <div id="control-login" class="admin-panel">
+                <div class="admin-kicker">Platform administration</div>
+                <h3>Review shop applications</h3>
+                <p class="admin-note">Admin access is restricted to the authorised administrator account.</p>
+                <form class="admin-form" id="controlLoginForm">
+                    <label for="controlEmail">Admin email</label>
+                    <input id="controlEmail" type="email" autocomplete="username" required placeholder="ckmupazviriwo5@gmail.com">
+                    <label for="controlPassword">Admin password</label>
+                    <input id="controlPassword" type="password" autocomplete="current-password" required placeholder="Password">
+                    <button class="btn" type="submit">Open approval centre</button>
+                    <div class="admin-status" id="controlLoginStatus" role="status"></div>
+                </form>
+                <button class="forgot-link" id="forgotPasswordBtn" type="button">Forgot password?</button>
+                <div class="recovery-panel" id="recovery-panel" hidden>
+                    <h3>Reset admin password</h3>
+                    <p class="prototype-warning">A real SMS requires a secure server and SMS provider. This standalone prototype collects the number and verifies an OTP locally.</p>
+                    <form class="admin-form" id="phoneForm">
+                        <label for="recoveryPhone">Phone number</label>
+                        <input id="recoveryPhone" type="tel" autocomplete="tel" required placeholder="+1 555 000 0000">
+                        <button class="btn" type="submit">Send verification OTP</button>
+                        <div class="admin-status" id="phoneStatus" role="status"></div>
+                    </form>
+                    <form class="admin-form" id="otpForm" hidden>
+                        <label for="recoveryOtp">Verification OTP</label>
+                        <input id="recoveryOtp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required placeholder="Enter 6-digit OTP">
+                        <button class="btn" type="submit">Verify OTP</button>
+                        <div class="admin-status" id="otpStatus" role="status"></div>
+                    </form>
+                </div>
+            </div>
+            <div id="control-dashboard" class="admin-panel" hidden>
+                <div class="admin-kicker">Applications</div>
+                <h3>Shop owners awaiting approval</h3>
+                <div id="applications-list"></div>
+                <button class="btn btn-close" id="controlLogoutBtn" type="button">Log out</button>
+            </div>
+        </div>
     </main>
 
 
@@ -630,9 +828,39 @@
             const modalPin = document.getElementById("modalPin");
             const reviewForm = document.getElementById("reviewForm");
             const reviewsList = document.getElementById("reviews-list");
+            const foodGrid = document.getElementById("foodGrid");
+            const loginForm = document.getElementById("loginForm");
+            const loginStatus = document.getElementById("loginStatus");
+            const adminLogin = document.getElementById("admin-login");
+            const adminDashboard = document.getElementById("admin-dashboard");
+            const dealForm = document.getElementById("dealForm");
+            const dealStatus = document.getElementById("dealStatus");
+            const adminDealsList = document.getElementById("admin-deals-list");
+            const logoutBtn = document.getElementById("logoutBtn");
+            const applicationForm = document.getElementById("applicationForm");
+            const applicationStatus = document.getElementById("applicationStatus");
+            const controlLoginForm = document.getElementById("controlLoginForm");
+            const controlLoginStatus = document.getElementById("controlLoginStatus");
+            const controlLogin = document.getElementById("control-login");
+            const controlDashboard = document.getElementById("control-dashboard");
+            const applicationsList = document.getElementById("applications-list");
+            const controlLogoutBtn = document.getElementById("controlLogoutBtn");
+            const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+            const recoveryPanel = document.getElementById("recovery-panel");
+            const phoneForm = document.getElementById("phoneForm");
+            const otpForm = document.getElementById("otpForm");
+            const phoneStatus = document.getElementById("phoneStatus");
+            const otpStatus = document.getElementById("otpStatus");
+            const clientSignupForm = document.getElementById("clientSignupForm");
+            const clientSignupStatus = document.getElementById("clientSignupStatus");
 
             let previousFocusedElement = null;
-            let timerInterval;
+            const dealsKey = "biteForLessDeals";
+            const sessionKey = "biteForLessOwnerSession";
+            const applicationsKey = "biteForLessApplications";
+            const adminSessionKey = "biteForLessAdminSession";
+            const clientsKey = "biteForLessClients";
+            let recoveryOtp = null;
 
             function generatePin() {
                 return String(Math.floor(1000 + Math.random() * 9000));
@@ -674,13 +902,6 @@
                 previousFocusedElement?.focus();
             }
 
-            document.querySelectorAll(".reserve-btn").forEach((button) => {
-                button.addEventListener("click", () => {
-                    const card = button.closest(".card");
-                    openReservation(card.dataset.item, card.dataset.vendor);
-                });
-            });
-
             closeModalBtn.addEventListener("click", closeModal);
 
             modal.addEventListener("click", (event) => {
@@ -693,38 +914,252 @@
                 }
             });
 
-            // Countdown timers are based on the initial values in data-minutes.
-            const timerElements = document.querySelectorAll(".timer");
-            timerElements.forEach((timer) => {
-                let remainingSeconds = Number(timer.dataset.minutes) * 60;
-                const valueElement = timer.querySelector(".time-value");
+            function escapeHtml(value) {
+                return String(value).replace(/[&<>\"']/g, (character) => ({
+                    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"
+                }[character]));
+            }
 
-                const updateTimer = () => {
-                    const minutes = Math.floor(remainingSeconds / 60);
-                    const seconds = remainingSeconds % 60;
+            function getDeals() {
+                const savedDeals = localStorage.getItem(dealsKey);
+                if (savedDeals) return JSON.parse(savedDeals);
 
-                    if (remainingSeconds <= 0) {
-                        valueElement.textContent = "closed";
-                        timer.style.color = "#b00020";
-                        timer.closest(".card").querySelector(".reserve-btn").disabled = true;
-                        timer.closest(".card").querySelector(".reserve-btn").textContent = "Deal Closed";
-                        return;
-                    }
+                const initialDeals = [...foodGrid.querySelectorAll(".card")].map((card) => ({
+                    id: crypto.randomUUID(),
+                    shop: card.dataset.vendor,
+                    name: card.dataset.item,
+                    price: card.querySelector(".current-price").textContent,
+                    oldPrice: card.querySelector(".old-price").textContent,
+                    image: card.querySelector("img").src,
+                    expiresAt: Date.now() + Number(card.querySelector(".timer").dataset.minutes) * 60000,
+                    owner: "demo"
+                }));
+                localStorage.setItem(dealsKey, JSON.stringify(initialDeals));
+                return initialDeals;
+            }
 
-                    if (minutes >= 60) {
-                        const hours = Math.floor(minutes / 60);
-                        const mins = minutes % 60;
-                        valueElement.textContent = `${hours} hr${hours !== 1 ? "s" : ""} ${mins} min${mins !== 1 ? "s" : ""}`;
-                    } else {
-                        valueElement.textContent = `${minutes} min${minutes !== 1 ? "s" : ""} ${String(seconds).padStart(2, "0")} sec`;
-                    }
+            function saveDeals(deals) { localStorage.setItem(dealsKey, JSON.stringify(deals)); }
 
-                    remainingSeconds--;
-                };
+            function getApplications() {
+                try { return JSON.parse(localStorage.getItem(applicationsKey) || "[]"); }
+                catch { return []; }
+            }
 
-                updateTimer();
-                setInterval(updateTimer, 1000);
+            function saveApplications(applications) { localStorage.setItem(applicationsKey, JSON.stringify(applications)); }
+
+            function getClients() {
+                try { return JSON.parse(localStorage.getItem(clientsKey) || "[]"); }
+                catch { return []; }
+            }
+
+            function formatRemaining(expiresAt) {
+                const remainingSeconds = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+                const minutes = Math.floor(remainingSeconds / 60);
+                const seconds = remainingSeconds % 60;
+                if (!remainingSeconds) return "closed";
+                if (minutes >= 60) return `${Math.floor(minutes / 60)} hr ${minutes % 60} min`;
+                return `${minutes} min ${String(seconds).padStart(2, "0")} sec`;
+            }
+
+            function renderDeals() {
+                const activeDeals = getDeals().filter((deal) => deal.expiresAt > Date.now());
+                saveDeals(activeDeals);
+                foodGrid.innerHTML = activeDeals.length ? activeDeals.map((deal) => `
+                    <article class="card" data-item="${escapeHtml(deal.name)}" data-vendor="${escapeHtml(deal.shop)}">
+                        <img src="${escapeHtml(deal.image)}" alt="${escapeHtml(deal.name)}" loading="lazy">
+                        <div class="card-body">
+                            <div class="vendor-name">${escapeHtml(deal.shop)}</div>
+                            <div class="item-title">${escapeHtml(deal.name)}</div>
+                            <div class="pricing"><span class="current-price">${escapeHtml(deal.price)}</span><span class="old-price">${escapeHtml(deal.oldPrice)}</span></div>
+                            <div class="timer" aria-live="polite">⏰ Sale ends in <span class="time-value">${formatRemaining(deal.expiresAt)}</span></div>
+                            <button class="btn reserve-btn" type="button">Reserve &amp; Get QR</button>
+                        </div>
+                    </article>`).join("") : `<p class="empty-reviews">No active flash sales right now. Check back soon.</p>`;
+
+                foodGrid.querySelectorAll(".reserve-btn").forEach((button) => button.addEventListener("click", () => {
+                    const card = button.closest(".card");
+                    openReservation(card.dataset.item, card.dataset.vendor);
+                }));
+            }
+
+            function renderAdminDeals() {
+                const ownerEmail = sessionStorage.getItem(sessionKey);
+                const deals = getDeals().filter((deal) => deal.owner === "demo" || deal.owner === ownerEmail);
+                adminDealsList.innerHTML = deals.length ? deals.map((deal) => `
+                    <div class="deal-row"><div><strong>${escapeHtml(deal.name)}</strong><small>${escapeHtml(deal.shop)} · ends ${new Date(deal.expiresAt).toLocaleString()}</small></div>
+                    <button class="btn btn-danger delete-deal" data-id="${escapeHtml(deal.id)}" type="button">Remove</button></div>`).join("") : `<p class="admin-note">No published deals yet.</p>`;
+                adminDealsList.querySelectorAll(".delete-deal").forEach((button) => button.addEventListener("click", () => {
+                    saveDeals(getDeals().filter((deal) => deal.id !== button.dataset.id));
+                    renderDeals();
+                    renderAdminDeals();
+                }));
+            }
+
+            function updateAdminState() {
+                const loggedIn = Boolean(sessionStorage.getItem(sessionKey));
+                adminLogin.hidden = loggedIn;
+                adminDashboard.hidden = !loggedIn;
+                if (loggedIn) {
+                    const owner = getApplications().find((application) => application.email === sessionStorage.getItem(sessionKey));
+                    if (owner) document.getElementById("dealShop").value = owner.shop;
+                    renderAdminDeals();
+                }
+            }
+
+            function updateControlState() {
+                const loggedIn = sessionStorage.getItem(adminSessionKey) === "true";
+                controlLogin.hidden = loggedIn;
+                controlDashboard.hidden = !loggedIn;
+                if (loggedIn) renderApplications();
+            }
+
+            function renderApplications() {
+                const applications = getApplications();
+                applicationsList.innerHTML = applications.length ? applications.map((application) => `
+                    <div class="deal-row approval-row">
+                        <div><strong>${escapeHtml(application.shop)}</strong><small>${escapeHtml(application.owner)} · ${escapeHtml(application.email)}<br>${escapeHtml(application.phone)} · ${escapeHtml(application.address)}<br>${escapeHtml(application.message)}<br>Status: ${escapeHtml(application.status)}</small></div>
+                        ${application.status === "pending" ? `<div class="approval-actions"><button class="btn btn-success application-action" data-status="approved" data-id="${escapeHtml(application.id)}" type="button">Approve</button><button class="btn btn-danger application-action" data-status="rejected" data-id="${escapeHtml(application.id)}" type="button">Reject</button></div>` : ""}
+                    </div>`).join("") : `<p class="admin-note">No shop-owner applications yet.</p>`;
+                applicationsList.querySelectorAll(".application-action").forEach((button) => button.addEventListener("click", () => {
+                    const updated = getApplications().map((application) => application.id === button.dataset.id ? { ...application, status: button.dataset.status } : application);
+                    saveApplications(updated);
+                    renderApplications();
+                }));
+            }
+
+            function showView(viewName) {
+                document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("is-active", view.dataset.view === viewName));
+                if (viewName === "admin") updateAdminState();
+                if (viewName === "admin-control") updateControlState();
+            }
+
+            function routeFromHash() {
+                const route = location.hash.slice(1);
+                showView(route === "reviews" ? "reviews" : route === "admin" ? "admin" : route === "apply" ? "apply" : route === "admin-control" ? "admin-control" : "home");
+            }
+
+            loginForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+                const password = document.getElementById("loginPassword").value;
+                const approvedOwner = getApplications().find((application) => application.email === email && application.password === password && application.status === "approved");
+                const client = getClients().find((account) => account.email === email && account.password === password);
+                if ((email === "owner@biteforless.test" && password === "demo123") || approvedOwner) {
+                    sessionStorage.setItem(sessionKey, email);
+                    loginStatus.textContent = "Signed in successfully.";
+                    updateAdminState();
+                } else if (client) {
+                    loginStatus.textContent = "Client signed in. Taking you to Flash Deals.";
+                    location.hash = "deals";
+                } else {
+                    loginStatus.textContent = "Incorrect demo credentials.";
+                }
             });
+
+            document.querySelectorAll(".auth-option").forEach((option) => option.addEventListener("click", () => {
+                document.querySelectorAll(".auth-option").forEach((button) => button.classList.toggle("is-selected", button === option));
+                document.querySelectorAll(".auth-panel").forEach((panel) => panel.hidden = panel.id !== option.dataset.panel);
+            }));
+
+            clientSignupForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const email = document.getElementById("clientEmail").value.trim().toLowerCase();
+                const clients = getClients();
+                if (clients.some((client) => client.email === email)) {
+                    clientSignupStatus.textContent = "An account with this email already exists.";
+                    return;
+                }
+                clients.push({
+                    name: document.getElementById("clientName").value.trim(),
+                    email,
+                    password: document.getElementById("clientPassword").value
+                });
+                localStorage.setItem(clientsKey, JSON.stringify(clients));
+                clientSignupForm.reset();
+                clientSignupStatus.textContent = "Client account created. Taking you to Flash Deals.";
+                location.hash = "deals";
+            });
+
+            applicationForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const email = document.getElementById("applicationEmail").value.trim().toLowerCase();
+                const applications = getApplications();
+                if (applications.some((application) => application.email === email && application.status === "pending")) {
+                    applicationStatus.textContent = "An application for this email is already awaiting review.";
+                    return;
+                }
+                applications.push({
+                    id: crypto.randomUUID(), status: "pending", shop: document.getElementById("applicationShop").value.trim(),
+                    owner: document.getElementById("applicationOwner").value.trim(), email,
+                    password: document.getElementById("applicationPassword").value,
+                    phone: document.getElementById("applicationPhone").value.trim(),
+                    address: document.getElementById("applicationAddress").value.trim(),
+                    message: document.getElementById("applicationMessage").value.trim(), submittedAt: Date.now()
+                });
+                saveApplications(applications);
+                applicationForm.reset();
+                applicationStatus.textContent = "Application sent. An admin must approve it before you can log in and publish sales.";
+            });
+
+            controlLoginForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const email = document.getElementById("controlEmail").value.trim().toLowerCase();
+                const password = document.getElementById("controlPassword").value;
+                if (email === "ckmupazviriwo5@gmail.com" && password === "Flame123") {
+                    sessionStorage.setItem(adminSessionKey, "true");
+                    controlLoginStatus.textContent = "Admin access granted.";
+                    updateControlState();
+                } else controlLoginStatus.textContent = "Access denied. Check the authorised admin email and password.";
+            });
+
+            forgotPasswordBtn.addEventListener("click", () => {
+                recoveryPanel.hidden = !recoveryPanel.hidden;
+                if (!recoveryPanel.hidden) document.getElementById("recoveryPhone").focus();
+            });
+
+            phoneForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const phone = document.getElementById("recoveryPhone").value.trim();
+                if (!phone) return;
+                recoveryOtp = String(Math.floor(100000 + Math.random() * 900000));
+                otpForm.hidden = false;
+                phoneStatus.textContent = `Verification requested for ${phone}. Connect this form to an SMS provider in production.`;
+                document.getElementById("recoveryOtp").focus();
+            });
+
+            otpForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const enteredOtp = document.getElementById("recoveryOtp").value.trim();
+                otpStatus.textContent = enteredOtp === recoveryOtp
+                    ? "Phone verified. Contact the platform administrator to set a new password."
+                    : "That OTP is not valid. Request a new code and try again.";
+            });
+
+            dealForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const expiry = new Date(document.getElementById("dealExpiry").value).getTime();
+                if (!expiry || expiry <= Date.now()) { dealStatus.textContent = "Choose a future expiry time."; return; }
+                const newDeal = {
+                    id: crypto.randomUUID(), owner: sessionStorage.getItem(sessionKey),
+                    shop: document.getElementById("dealShop").value.trim(),
+                    name: document.getElementById("dealName").value.trim(),
+                    price: document.getElementById("dealPrice").value.trim(),
+                    oldPrice: document.getElementById("dealOldPrice").value.trim(),
+                    image: document.getElementById("dealImage").value.trim(), expiresAt: expiry
+                };
+                saveDeals([...getDeals(), newDeal]);
+                dealForm.reset();
+                dealStatus.textContent = "Flash sale published.";
+                renderDeals();
+                renderAdminDeals();
+            });
+
+            logoutBtn.addEventListener("click", () => { sessionStorage.removeItem(sessionKey); updateAdminState(); });
+            controlLogoutBtn.addEventListener("click", () => { sessionStorage.removeItem(adminSessionKey); updateControlState(); });
+            window.addEventListener("hashchange", routeFromHash);
+            renderDeals();
+            setInterval(renderDeals, 1000);
+            routeFromHash();
 
             reviewForm.addEventListener("submit", (event) => {
                 event.preventDefault();
