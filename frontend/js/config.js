@@ -1,4 +1,4 @@
-// Bite For Less â€” single client configuration point.
+// Bite For Less — single client configuration point.
 // APK distribution: versioned assets on GitHub Releases in the Android repo
 // (https://github.com/ckmupazviriwo5-hue/BiteForLess-).
 // Until a verified release-asset URL exists, keep APK_URL empty/falsy so the
@@ -7,8 +7,14 @@
 // database passwords, or JWT secrets in this file.
 window.BFL_CONFIG = {
   API_BASE: '/api',
-  // Example (do NOT use until verified): 'https://github.com/ckmupazviriwo5-hue/BiteForLess-/releases/download/v1.0.0/bite-for-less.apk'
-  APK_URL: '',
+  // Website-served file (copied from the Android project's verified local build).
+  // Replace with a versioned GitHub Release asset URL when publishing officially.
+  APK_URL: '/downloads/app-debug.apk',
   APK_RELEASES_URL: 'https://github.com/ckmupazviriwo5-hue/BiteForLess-/releases',
-  DATA_BACKEND: 'express'
+  // Marketplace reads: shared Supabase backend (public project URL +
+  // publishable key only — safe for browser code, RLS enforced server-side).
+  SUPABASE_URL: 'https://ktvlytdmjqkcdeahgdqy.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_ZdqDZK5Q2hCjSorTOMQweA_P1JQZgHw',
+  // 'supabase' = live catalog via Supabase; 'express' = legacy local backend.
+  DATA_BACKEND: 'supabase'
 };

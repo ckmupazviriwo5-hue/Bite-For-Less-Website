@@ -10,7 +10,17 @@ no new dependencies. All current imagery is remote Unsplash with `onerror` fallb
 | Hero visual (16:9-ish, ≤420px tall) | `index.html` `.hero-media[data-media-slot="hero"]` | Unsplash `photo-1504674900247` (plated dishes) | `photo-1547592180` + alt text |
 | Why-section split image | `index.html` `.split img` | Unsplash `photo-1488459716781` (market produce) | `photo-1542838132` + alt text |
 | How-it-works vendor image | `how-it-works.html` `.split img` | Unsplash `photo-1556740738` (counter handoff) | `photo-1542838132` + alt text |
-| Deal cards | `dealCardHTML` (api.js) | vendor `image_url`, else `photo-1547592180` | `onerror` hides `<img>`, card keeps text/prices |
+| Deal cards | `dealCardHTML` (api.js) | per-listing photo map in `supabase-catalog.js` (`PRODUCT_IMAGES`, all 12 verified HTTP 200 Oct 2026), else category photo, else generic | `onerror` hides `<img>`, card keeps text/prices |
+| Deal detail cover | `deal-page.js` facts | same chain via `productImage(deal)` | hidden on error, facts remain |
+
+Product-photo mapping (Unsplash License, free use; filenames are photo IDs):
+l1 bread `photo-1509440159596`, l2 croissants `photo-1555507036`, l3 veg box
+`photo-1542838132`, l4 fruit `photo-1519996529931`, l5 curry `photo-1585937421612`,
+l6 stew `photo-1547592180`, l7 muffins `photo-1607958996333`, l8 cinnamon rolls
+`photo-1509365465985`, l9 milk `photo-1550583724`, l10 samosas `photo-1601050690597`,
+l11 yoghurt `photo-1571212515416`, l12 juice `photo-1600271886742`.
+DB `image_url` values are untouched (all NULL); a future Supabase Storage bucket
+can replace hotlinks per-ID without code changes.
 
 Rules: never hotlink unlicensed images; always keep alt text; any AI actor/testimonial
 imagery is forbidden from being presented as real customers.

@@ -42,9 +42,18 @@ try {
   ({ deals: allDeals } = await api('/deals'));
   allDeals = allDeals || [];
   loaded = true;
-  applyView();
+  if (!allDeals.length) {
+    grid.innerHTML = '<div class="empty">No live deals right now — new surplus pickups appear here as vendors post them.</div>';
+    document.getElementById('resultCount').textContent = '';
+  } else {
+    applyView();
+  }
 } catch (err) {
-  grid.innerHTML = `<div class="error-box">${escapeHTML(err.message)}</div>`;
+  const msg = err && err.message ? err.message : 'Something went wrong.';
+  let hint = 'Please try again later.';
+  if (/not configured/i.test(msg)) hint = 'The demo catalog is being connected. Please check back soon.';
+  else if (/connection|network/i.test(msg)) hint = 'Check your connection and try again.';
+  grid.innerHTML = `<div class="error-box"><strong>Marketplace unavailable.</strong> ${escapeHTML(hint)}</div>`;
   document.getElementById('resultCount').textContent = '';
 }
 if (loaded) {

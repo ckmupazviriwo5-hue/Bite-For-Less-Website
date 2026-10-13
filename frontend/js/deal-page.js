@@ -1,5 +1,6 @@
 // Deal detail + reservation with quantity picker and pickup-code confirmation.
-import { api, countdown, dealImage, discountPct, formatZMW, tokenStore, esc } from './api.js';
+import { api, countdown, dealImage, discountPct, formatZMW, tokenStore, esc, isSupabaseMode } from './api.js';
+import { isBookable, eligibilityLabel } from './supabase-catalog.js';
 import { renderChrome, setStatus } from './layout.js';
 
 const id = new URLSearchParams(location.search).get('id');
@@ -8,33 +9,38 @@ const box = document.getElementById('dealDetail');
 function facts(d) {
   const pct = d.discount_percentage ?? discountPct(d.original_price, d.discounted_price);
   const savings = Number(d.original_price) - Number(d.discounted_price);
+  const bookable = isBookable(d);
+  const reservationBlock = isSupabaseMode()
+    ? `<p class="small muted" style="margin-top:1rem">Reservations need an account — coming soon in this demo. ` +
+      `This catalog is live Supabase data${d.is_demo ? ' (demonstration listing)' : ''}.</p>`
+    : `<form id="reserveForm" class="form-grid" style="margin-top:1rem">
+        <div class="form-row">
+          <label class="field">Quantity
+            <input type="number" id="qty" name="quantity" min="1" max="${d.quantity_remaining}" value="1" required />
+          </label>
+        </div>
+        <div><button class="btn btn-primary" type="submit" ${bookable ? '' : 'disabled'}>Reserve now</button></div>
+        <div class="status" id="reserveStatus" role="status"></div>
+        ${tokenStore.get() ? '' : '<p class="small muted">You will be asked to log in to complete the reservation.</p>'}
+      </form>`;
   return `
     <div class="detail-grid">
       <img class="cover" src="${esc(dealImage(d))}" alt="${esc(d.food_name)}" onerror="this.style.display='none'" />
       <div>
-        <span class="eyebrow">${esc(d.shop_name)}</span>
+        <span class="eyebrow">${esc(d.shop_name)}${d.is_demo ? ' · Demo' : ''}</span>
         <h1 style="font-size:clamp(1.6rem,3vw,2.3rem)">${esc(d.food_name)}</h1>
         <p>${esc(d.description || 'Fresh surplus food, available for a limited time.')}</p>
         <div class="deal-price"><span class="price-big">${formatZMW(d.discounted_price)}</span><s class="muted">${formatZMW(d.original_price)}</s></div>
         <p class="mt"><span class="pill hot">Save ${formatZMW(savings)} (−${pct}%)</span>
-        <span class="pill">${esc(countdown(d.expires_at))}</span></p>
+        <span class="pill">${esc(bookable ? countdown(d.expires_at) : eligibilityLabel(d))}</span></p>
         <ul class="fact-list">
           <li><span>Available</span><span>${d.quantity_remaining} of ${d.quantity}</span></li>
           <li><span>Category</span><span>${esc(d.category || 'Other')}</span></li>
           <li><span>Vendor</span><span>${esc(d.shop_name)}</span></li>
           ${d.city || d.address ? `<li><span>Pickup</span><span>${esc([d.address, d.city].filter(Boolean).join(', '))}</span></li>` : ''}
-          <li><span>Collection deadline</span><span>${esc(new Date(d.expires_at).toLocaleString())}</span></li>
+          <li><span>Collection deadline</span><span>${esc(d.expires_at ? new Date(d.expires_at).toLocaleString() : 'See vendor for times')}</span></li>
         </ul>
-        <form id="reserveForm" class="form-grid" style="margin-top:1rem">
-          <div class="form-row">
-            <label class="field">Quantity
-              <input type="number" id="qty" name="quantity" min="1" max="${d.quantity_remaining}" value="1" required />
-            </label>
-          </div>
-          <div><button class="btn btn-primary" type="submit" ${d.quantity_remaining < 1 ? 'disabled' : ''}>Reserve now</button></div>
-          <div class="status" id="reserveStatus" role="status"></div>
-          ${tokenStore.get() ? '' : '<p class="small muted">You will be asked to log in to complete the reservation.</p>'}
-        </form>
+        ${reservationBlock}
       </div>
     </div>`;
 }
@@ -75,7 +81,9 @@ if (!id) {
     const { deal } = await api(`/deals/${encodeURIComponent(id)}`);
     box.innerHTML = facts(deal);
     document.title = `${deal.food_name} | Bite For Less`;
-    document.getElementById('reserveForm').addEventListener('submit', async (e) => {
+    const form = document.getElementById('reserveForm');
+    if (!form) return; // Supabase mode: catalog only, no reservation form rendered.
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const status = document.getElementById('reserveStatus');
       if (!tokenStore.get()) {

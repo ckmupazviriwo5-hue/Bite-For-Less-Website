@@ -1,5 +1,13 @@
 // Bite For Less — shared API client (Express REST; Supabase-ready via config).
 // Reads window.BFL_CONFIG.API_BASE so the target can move without code edits.
+import {
+  fetchCatalogRows, fetchListingRow, normalizeListing, isBookable, productImage
+} from './supabase-catalog.js';
+
+const backend = () => (window.BFL_CONFIG && window.BFL_CONFIG.DATA_BACKEND) || 'express';
+const useSupabase = () => backend() === 'supabase';
+export const dataBackend = () => backend();
+export const isSupabaseMode = () => useSupabase();
 const base = () => (window.BFL_CONFIG && window.BFL_CONFIG.API_BASE) || '/api';
 
 export const tokenStore = {
@@ -9,6 +17,18 @@ export const tokenStore = {
 };
 
 export async function api(path, { method = 'GET', body, auth = false } = {}) {
+  if (useSupabase() && method === 'GET') {
+    if (path === '/deals') return supabaseDeals();
+    const detail = path.match(/^\/deals\/([^/]+)$/);
+    if (detail) return supabaseDeal(decodeURIComponent(detail[1]));
+  }
+  if (useSupabase() && (auth || method !== 'GET')) {
+    // Supabase Auth for website accounts is not wired yet: never fake it.
+    throw new Error(
+      'Accounts and reservations need the legacy local server for now. ' +
+      'The live catalog below is real Supabase data.'
+    );
+  }
   const headers = { 'Content-Type': 'application/json' };
   if (auth) {
     const token = tokenStore.get();
@@ -28,6 +48,26 @@ export async function api(path, { method = 'GET', body, auth = false } = {}) {
   const payload = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(payload.message || `Request failed (${res.status}).`);
   return payload;
+}
+
+// Supabase storefront: eligible rows mapped to the website deal model.
+// Inactive/sold-out/expired rows never reach the UI as reservable.
+async function supabaseDeals() {
+  const rows = await fetchCatalogRows();
+  const now = Date.now();
+  const deals = rows
+    .map(normalizeListing)
+    .filter((d) => isBookable(d, now))
+    .map((d) => ({ ...d, image_url: productImage(d) }));
+  return { deals };
+}
+
+async function supabaseDeal(id) {
+  const deal = normalizeListing(await fetchListingRow(id));
+  deal.image_url = productImage(deal);
+  // Returned as-is: the detail page renders sold-out/expired/paused states
+  // honestly and disables reservation unless bookable (see deal-page.js).
+  return { deal };
 }
 
 // Trusted role, always from the backend — never from editable client storage.
@@ -73,7 +113,7 @@ export function dealCardHTML(deal, detailBase = '/deal.html') {
     <article class="deal-card">
       <div class="img-wrap"><img src="${esc(dealImage(deal))}" alt="${esc(deal.food_name)}" loading="lazy" onerror="this.style.display='none'" /></div>
       <div class="deal-body">
-        <span class="deal-vendor">${esc(deal.shop_name)}</span>
+        <span class="deal-vendor">${esc(deal.shop_name)}${deal.is_demo ? ' · Demo' : ''}</span>
         <h3 class="deal-name">${esc(deal.food_name)}</h3>
         <div class="deal-price"><strong>${formatZMW(deal.discounted_price)}</strong><s>${formatZMW(deal.original_price)}</s></div>
         <span class="pill hot" data-expires="${esc(deal.expires_at)}">−${pct}% · ${esc(countdown(deal.expires_at))}</span>
