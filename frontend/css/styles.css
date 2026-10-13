@@ -347,7 +347,42 @@ h3 { font-size: 1.15rem; }
   flex-wrap: wrap;
 }
 .footer-wrap strong span { color: var(--primary); }
-.footer-links { display: flex; gap: 1rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1rem; color: var(--muted); align-items: center; flex-wrap: wrap; }
+.footer-apk {
+  background: rgba(255,152,0,0.1);
+  border: 1px solid rgba(255,152,0,0.4);
+  color: var(--warning);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 700;
+}
+.footer-apk:hover { background: rgba(255,152,0,0.18); }
+.btn-android {
+  background: rgba(255,152,0,0.1);
+  color: var(--text);
+  border: 1px solid rgba(255,152,0,0.45);
+}
+.btn-android:hover { background: rgba(255,152,0,0.18); }
+.apk-note {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 560px;
+}
+.apk-pill {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255,152,0,0.14);
+  border: 1px solid rgba(255,152,0,0.4);
+  color: var(--warning);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+}
+.apk-modal-list { color: var(--muted); padding-left: 1.2rem; line-height: 1.9; }
 .modal {
   position: fixed;
   inset: 0;

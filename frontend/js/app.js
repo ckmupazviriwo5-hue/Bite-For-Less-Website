@@ -37,7 +37,7 @@ async function apiRequest(path, options = {}) {
 }
 
 function formatPrice(value) {
-  return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  return Number(value).toLocaleString('en-ZM', { style: 'currency', currency: 'ZMW' });
 }
 
 function calculateCountdown(expiresAt) {
@@ -404,6 +404,55 @@ function bindCategoryFilter() {
   filter.addEventListener('change', renderDeals);
 }
 
+function getApkConfig() {
+  const config = window.BFL_CONFIG || {};
+  const url = (config.APK_URL || '').trim();
+  return { url: url || '', releasesUrl: config.RELEASES_URL || config.APK_RELEASES_URL || '' };
+}
+
+function showApkModal() {
+  const { url, releasesUrl } = getApkConfig();
+  if (url) {
+    window.open(url, '_blank', 'noopener');
+    return;
+  }
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-label', 'Android app coming soon');
+  modal.innerHTML = `
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="Close Android app notice">×</button>
+      <span class="eyebrow">Android app</span>
+      <h3>Coming soon</h3>
+      <p>The verified Bite For Less Android build isn't published yet. It will ship as a versioned asset on GitHub Releases in the Android repository — never as a source-code ZIP or an unverified file.</p>
+      <ul class="apk-modal-list">
+        <li>No APK exists yet — nothing to download today.</li>
+        <li>Watch the Releases page for the first verified build.</li>
+      </ul>
+      <div class="dashboard-actions">
+        <button class="btn btn-primary open-releases" type="button">View Releases page</button>
+        <button class="btn btn-secondary close-modal" type="button">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
+  modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (event) => { if (event.target === modal) modal.remove(); });
+  modal.querySelector('.open-releases').addEventListener('click', () => {
+    if (releasesUrl) window.open(releasesUrl, '_blank', 'noopener');
+    modal.remove();
+  });
+}
+
+function bindApkButtons() {
+  document.getElementById('apkDownloadBtn')?.addEventListener('click', showApkModal);
+  document.getElementById('apkFooterBtn')?.addEventListener('click', showApkModal);
+  // If a verified APK_URL is ever configured, hide the coming-soon note.
+  if (getApkConfig().url) document.getElementById('apkComingSoonNote')?.remove();
+}
+
 async function loadDashboardData() {
   if (!state.currentUser) return;
 
@@ -472,7 +521,7 @@ async function renderDashboard() {
             <li><strong>Pending apps:</strong> ${stats.pending_applications}</li>
             <li><strong>Active deals:</strong> ${stats.active_deals}</li>
             <li><strong>Reservations:</strong> ${stats.total_reservations}</li>
-            <li><strong>Revenue:</strong> $${Number(stats.total_revenue || 0).toFixed(2)}</li>
+            <li><strong>Revenue:</strong> K${Number(stats.total_revenue || 0).toFixed(2)}</li>
           </ul>
         </div>
         <div class="dashboard-card">
@@ -668,6 +717,7 @@ async function renderDashboard() {
 
 async function initialize() {
   bindAuthModal();
+  bindApkButtons();
   bindCustomerSignup();
   bindCustomerLogin();
   bindShopLogin();

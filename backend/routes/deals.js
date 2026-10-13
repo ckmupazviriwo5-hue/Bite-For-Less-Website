@@ -132,6 +132,24 @@ router.put('/:id', authenticate, requireRole('shop_owner', 'admin'), (req, res) 
     )
   };
 
+  const dealCheck = validateDealInput({
+    food_name: updated.food_name,
+    shop_name: updated.shop_name,
+    category: updated.category,
+    original_price: updated.original_price,
+    discounted_price: updated.discounted_price,
+    quantity: updated.quantity,
+    expires_at: updated.expires_at
+  });
+
+  if (!dealCheck.valid) {
+    return res.status(400).json({ success: false, message: dealCheck.errors[0] });
+  }
+
+  if (!Number.isFinite(Number(updated.quantity_remaining)) || Number(updated.quantity_remaining) < 0 || Number(updated.quantity_remaining) > Number(updated.quantity)) {
+    return res.status(400).json({ success: false, message: 'Remaining quantity must be between 0 and total quantity.' });
+  }
+
   db.prepare(`UPDATE deals SET food_name = ?, description = ?, category = ?, original_price = ?, discounted_price = ?, discount_percentage = ?, quantity = ?, quantity_remaining = ?, image_url = ?, expires_at = ?, status = ? WHERE id = ?`)
     .run(updated.food_name, updated.description, updated.category, updated.original_price, updated.discounted_price, updated.discount_percentage, updated.quantity, updated.quantity_remaining, updated.image_url, updated.expires_at, updated.status, req.params.id);
 

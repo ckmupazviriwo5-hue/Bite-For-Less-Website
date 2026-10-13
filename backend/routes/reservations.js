@@ -19,7 +19,10 @@ router.post('/', authenticate, (req, res) => {
     return res.status(400).json({ success: false, message: 'Deal has expired.' });
   }
 
-  const quantity = Math.max(1, Number(body.quantity || 1));
+  const quantity = Number(body.quantity ?? 1);
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ success: false, message: 'Quantity must be a whole number of at least 1.' });
+  }
   if (quantity > deal.quantity_remaining) {
     return res.status(400).json({ success: false, message: 'Not enough stock available.' });
   }
@@ -123,7 +126,24 @@ router.post('/:id/cancel', authenticate, (req, res) => {
     return res.status(403).json({ success: false, message: 'You cannot cancel this reservation.' });
   }
 
-  db.prepare('UPDATE reservations SET status = ? WHERE id = ?').run('cancelled', req.params.id);
+  if (reservation.status !== 'reserved') {
+    return res.status(400).json({ success: false, message: 'Only active reservations can be cancelled.' });
+  }
+
+  const tx = db.transaction(() => {
+    const updated = db.prepare('UPDATE reservations SET status = ? WHERE id = ? AND status = ?')
+      .run('cancelled', req.params.id, 'reserved');
+    if (updated.changes === 1) {
+      const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(reservation.deal_id);
+      let dealStatus = deal.status;
+      if (deal.status === 'sold_out') {
+        dealStatus = new Date(deal.expires_at).getTime() > Date.now() ? 'active' : 'expired';
+      }
+      db.prepare('UPDATE deals SET quantity_remaining = quantity_remaining + ?, status = ? WHERE id = ?')
+        .run(reservation.quantity, dealStatus, reservation.deal_id);
+    }
+  });
+  tx();
   return res.json({ success: true, message: 'Reservation cancelled.' });
 });
 

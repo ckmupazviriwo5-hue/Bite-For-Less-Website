@@ -45,8 +45,12 @@ router.post('/register', async (req, res) => {
     status: 'active'
   };
 
-  db.prepare(`INSERT INTO users (id, name, email, phone, password_hash, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)`)
-    .run(user.id, user.name, user.email, user.phone, user.password_hash, user.role, user.status);
+  try {
+    db.prepare(`INSERT INTO users (id, name, email, phone, password_hash, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+      .run(user.id, user.name, user.email, user.phone, user.password_hash, user.role, user.status);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Unable to create the account. Please try again.' });
+  }
 
   const token = signToken(user);
   return res.status(201).json({ success: true, message: 'Account created successfully.', token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
@@ -131,11 +135,18 @@ router.post('/shop-owner/register', async (req, res) => {
     status: 'pending'
   };
 
-  db.prepare('INSERT INTO users (id, name, email, phone, password_hash, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .run(user.id, user.name, user.email, user.phone, user.password_hash, user.role, user.status);
+  try {
+    const tx = db.transaction(() => {
+      db.prepare('INSERT INTO users (id, name, email, phone, password_hash, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(user.id, user.name, user.email, user.phone, user.password_hash, user.role, user.status);
 
-  db.prepare('INSERT INTO shops (id, owner_id, name, email, phone, address, city, business_info, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(makeId('shop_record'), user.id, sanitizeText(body.shop_name), normalizedEmail, sanitizeText(body.phone), sanitizeText(body.address), sanitizeText(body.city || ''), sanitizeText(body.business_info || ''), 'pending');
+      db.prepare('INSERT INTO shops (id, owner_id, name, email, phone, address, city, business_info, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(makeId('shop_record'), user.id, sanitizeText(body.shop_name), normalizedEmail, sanitizeText(body.phone), sanitizeText(body.address), sanitizeText(body.city || ''), sanitizeText(body.business_info || ''), 'pending');
+    });
+    tx();
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Unable to register the shop account. Please try again.' });
+  }
 
   const token = signToken(user);
   return res.status(201).json({ success: true, message: 'Shop application received. Awaiting admin approval.', token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });

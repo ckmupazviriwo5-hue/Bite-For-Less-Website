@@ -11,6 +11,7 @@ Bite For Less is a food-surplus marketplace designed to help local businesses li
 - Review and rating system
 - Database-backed backend with SQLite for local development
 - Modern orange-on-black responsive frontend
+- Prices displayed in Zambian Kwacha (ZMW); stored API values are plain numbers interpreted as ZMW
 
 ## Project structure
 

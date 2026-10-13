@@ -13,9 +13,12 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-const databasePath = config.databaseUrl.startsWith('sqlite:')
-  ? path.join(rootDir, config.databaseUrl.replace('sqlite:./', '').replace('sqlite:', ''))
+const rawPath = config.databaseUrl.startsWith('sqlite:')
+  ? config.databaseUrl.replace('sqlite:', '')
   : config.databaseUrl;
+const databasePath = path.isAbsolute(rawPath)
+  ? rawPath
+  : path.join(rootDir, rawPath.replace(/^\.\//, ''));
 
 const db = new Database(databasePath);
 db.pragma('journal_mode = WAL');
@@ -34,7 +37,7 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS shops (
     id TEXT PRIMARY KEY,
-    owner_id TEXT NOT NULL UNIQUE,
+    owner_id TEXT UNIQUE,
     name TEXT NOT NULL,
     email TEXT NOT NULL,
     phone TEXT,
@@ -130,5 +133,41 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 `);
+
+// One-time migration: shop applications are submitted before an owner account
+// exists, so shops.owner_id must be nullable (NULL = pending application with
+// no login yet). Rebuilds the table only on databases created with the old
+// NOT NULL schema; all existing rows are preserved.
+const ownerCol = db.prepare(`SELECT "notnull" AS "is_notnull" FROM pragma_table_info('shops') WHERE name = 'owner_id'`).get();
+if (ownerCol && ownerCol.is_notnull === 1) {
+  db.exec('PRAGMA foreign_keys = OFF');
+  try {
+    db.transaction(() => {
+      db.exec(`
+        CREATE TABLE shops_new (
+          id TEXT PRIMARY KEY,
+          owner_id TEXT UNIQUE,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT,
+          address TEXT,
+          city TEXT,
+          latitude REAL,
+          longitude REAL,
+          business_info TEXT,
+          status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','suspended')),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (owner_id) REFERENCES users(id)
+        );
+        INSERT INTO shops_new (id, owner_id, name, email, phone, address, city, latitude, longitude, business_info, status, created_at)
+          SELECT id, owner_id, name, email, phone, address, city, latitude, longitude, business_info, status, created_at FROM shops;
+        DROP TABLE shops;
+        ALTER TABLE shops_new RENAME TO shops;
+      `);
+    })();
+  } finally {
+    db.exec('PRAGMA foreign_keys = ON');
+  }
+}
 
 export default db;

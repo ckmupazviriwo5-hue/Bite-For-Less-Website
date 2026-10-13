@@ -15,7 +15,7 @@ router.get('/statistics', (req, res) => {
     active_deals: db.prepare('SELECT COUNT(*) as c FROM deals WHERE status = ?').get('active').c,
     total_reservations: db.prepare('SELECT COUNT(*) as c FROM reservations').get().c,
     food_rescued: db.prepare('SELECT COALESCE(SUM(quantity), 0) as c FROM reservations WHERE status = ?').get('collected').c,
-    total_revenue: db.prepare('SELECT COALESCE(SUM(total_amount), 0) as c FROM payments WHERE status = ?').get('success').c
+    total_revenue: db.prepare('SELECT COALESCE(SUM(amount), 0) as c FROM payments WHERE status = ?').get('success').c
   };
 
   return res.json({ success: true, statistics: stats });

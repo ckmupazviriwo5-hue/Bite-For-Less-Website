@@ -40,7 +40,11 @@
           <div class="hero-actions">
             <a class="btn btn-primary" href="#deals">Browse Flash Deals</a>
             <a class="btn btn-secondary" href="#apply">Join as a Shop</a>
+            <button class="btn btn-android" id="apkDownloadBtn" type="button">
+              <span aria-hidden="true">▾</span> Download Android App
+            </button>
           </div>
+          <p class="apk-note" id="apkComingSoonNote"><span class="apk-pill">Coming soon</span> The Android app will be published as a verified GitHub Release — check back shortly.</p>
         </div>
         <div class="hero-card" aria-label="Featured food rescue summary">
           <div class="mini-stat">
@@ -209,6 +213,7 @@
         <a href="#deals">Deals</a>
         <a href="#impact">Impact</a>
         <a href="#apply">Join a Shop</a>
+        <button class="footer-apk" id="apkFooterBtn" type="button">Android App</button>
       </div>
     </div>
   </footer>
@@ -266,6 +271,7 @@
     </div>
   </div>
 
+  <script src="./js/config.js"></script>
   <script src="./js/app.js" type="module"></script>
 </body>
 </html>
