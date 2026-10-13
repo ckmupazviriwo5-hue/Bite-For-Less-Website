@@ -6,6 +6,7 @@
   <meta name="description" content="Bite For Less — discover great surplus food from local businesses at better prices and help reduce food waste." />
   <title>Bite For Less | Save Money. Rescue Food.</title>
   <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/hero.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -13,26 +14,54 @@
   <header class="site-header" id="site-header"></header>
 
   <main id="main">
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy reveal">
-          <span class="eyebrow">Local food rescue marketplace</span>
-          <h1>Save Money. Rescue Food.</h1>
-          <p class="lead">Discover great food from local businesses at better prices — and help reduce food waste with every pickup.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="/deals.html">Explore Deals</a>
-            <a class="btn btn-secondary" href="/how-it-works.html">How It Works</a>
-          </div>
-          <p class="hero-note muted">Every rescued meal supports a neighbourhood bakery, market or restaurant. <button class="btn btn-ghost btn-sm" id="apkHeroBtn" type="button">Get the Android app (coming soon)</button></p>
-        </div>
-        <figure class="hero-media reveal" data-media-slot="hero">
-          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=70"
-               alt="Freshly prepared dishes ready for pickup"
-               onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=70';" />
-          <figcaption>Fresh surplus dishes, rescued before closing time.</figcaption>
-        </figure>
+    <section class="bfl-hero" data-bfl-hero aria-label="Bite For Less local food marketplace">
+      <div class="bfl-hero__backdrops" aria-hidden="true">
+        <div class="bfl-hero__scene is-active" style="--scene-image:url('/assets/hero/bite_for_less_fresh_feast_banner.avif')"></div>
+        <div class="bfl-hero__scene" style="--scene-image:url('/assets/hero/bite_for_less_golden_market_feast.avif')"></div>
+        <div class="bfl-hero__scene" style="--scene-image:url('/assets/hero/bite_for_less_rustic_feast.avif')"></div>
       </div>
+      <div class="bfl-hero__glow" aria-hidden="true"></div>
+      <div class="bfl-hero__inner">
+        <div class="bfl-hero__content">
+          <div class="bfl-hero__eyebrow"><span class="bfl-hero__spark" aria-hidden="true"></span> LOCAL FOOD, BETTER LIVING</div>
+          <div class="bfl-hero__story">
+            <p class="bfl-hero__index" data-bfl-label>01 / GOOD FOOD. BETTER LIVING.</p>
+            <h1 data-bfl-headline>Save more.<br><span>Waste less.</span></h1>
+            <p class="bfl-hero__description" data-bfl-description>Discover delicious surplus food from local bakeries, markets and restaurants. Better prices, less waste.</p>
+          </div>
+          <div class="bfl-hero__actions">
+            <a href="/deals.html" class="btn bfl-hero__explore">Explore deals <span aria-hidden="true">↗</span></a>
+            <button type="button" class="btn bfl-hero__install" data-bfl-install>Install Now <span aria-hidden="true">↓</span></button>
+          </div>
+          <p class="bfl-hero__download-note" data-bfl-install-note role="status" aria-live="polite">Checking the latest Android release…</p>
+        </div>
+        <div class="bfl-hero__bottom">
+          <div class="bfl-hero__promise"><strong aria-hidden="true">✳</strong> Fresh finds. Local love. Less waste.</div>
+          <div class="bfl-hero__controls" role="group" aria-label="Hero slideshow controls">
+            <button type="button" class="bfl-hero__arrow" data-bfl-prev aria-label="Previous slide">←</button>
+            <div class="bfl-hero__dots" aria-label="Select slide">
+              <button type="button" class="bfl-hero__dot is-active" data-bfl-slide="0" aria-label="Slide 1, current" aria-pressed="true"><span></span></button>
+              <button type="button" class="bfl-hero__dot" data-bfl-slide="1" aria-label="Slide 2" aria-pressed="false"><span></span></button>
+              <button type="button" class="bfl-hero__dot" data-bfl-slide="2" aria-label="Slide 3" aria-pressed="false"><span></span></button>
+            </div>
+            <button type="button" class="bfl-hero__arrow" data-bfl-next aria-label="Next slide">→</button>
+          </div>
+          <span class="bfl-hero__counter" data-bfl-fraction aria-hidden="true">01 / 03</span>
+        </div>
+      </div>
+      <span class="bfl-hero__sr" data-bfl-announcement aria-live="polite" aria-atomic="true"></span>
+      <dialog class="bfl-install-dialog" id="bflAppDialog" aria-label="Android app availability">
+        <span class="eyebrow">Bite For Less on Android</span>
+        <h2>App coming soon</h2>
+        <p data-bfl-dialog-copy>No published APK available yet.</p>
+        <p class="small muted">Only official Android APK release assets are linked. No source-code archives or unverified downloads.</p>
+        <div class="bfl-install-dialog__actions">
+          <a class="btn btn-primary btn-sm" href="https://github.com/ckmupazviriwo5-hue/BiteForLess-/releases" target="_blank" rel="noopener noreferrer">GitHub Releases ↗</a>
+          <button type="button" class="btn btn-secondary btn-sm" data-bfl-close>Close</button>
+        </div>
+      </dialog>
     </section>
+
 
     <section class="section" aria-labelledby="featured-heading">
       <div class="container">
@@ -109,5 +138,6 @@
 
   <script src="/js/config.js"></script>
   <script type="module" src="/js/home.js"></script>
+  <script type="module" src="/js/hero.js"></script>
 </body>
 </html>

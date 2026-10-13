@@ -288,3 +288,6 @@ table.data tr:last-child td { border-bottom: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* Shared, branded SVG mark for navigation and footer */
+.brand-logo { width: 36px; height: 36px; flex: none; display: block; border-radius: 10px; }

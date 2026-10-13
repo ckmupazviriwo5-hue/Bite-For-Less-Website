@@ -26,7 +26,7 @@ function headerHTML(active, user) {
   return `
     <div class="container nav-bar">
       <a class="brand" href="/index.html" aria-label="Bite For Less home">
-        <span class="brand-mark">B</span><span>Bite for <em>Less</em></span>
+        <img class="brand-logo" src="/assets/brand/logo-mark.svg" width="36" height="36" alt="" aria-hidden="true" /><span>Bite for <em>Less</em></span>
       </a>
       <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="siteNav">Menu</button>
       <nav class="nav-links" id="siteNav" aria-label="Main">${links}</nav>
@@ -39,7 +39,7 @@ function footerHTML() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <a class="brand" href="/index.html"><span class="brand-mark">B</span><span>Bite for <em>Less</em></span></a>
+          <a class="brand" href="/index.html"><img class="brand-logo" src="/assets/brand/logo-mark.svg" width="36" height="36" alt="" aria-hidden="true" /><span>Bite for <em>Less</em></span></a>
           <p class="small mt">Rescuing surplus food with local businesses — demo marketplace for school evaluation.</p>
         </div>
         <div class="footer-nav">
