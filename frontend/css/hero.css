@@ -84,3 +84,7 @@
  .bfl-hero__story.is-entering > *, .bfl-hero__glow {animation:none;}
  .bfl-hero__dot.is-active span {animation:none;width:100%;}
 }
+
+/* Genuine frame-by-frame animated rising vapor in the opening ultrawide scene. */
+.bfl-hero__video { position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; object-position:center; pointer-events:none; }
+@media (prefers-reduced-motion:reduce) { .bfl-hero__video { display:none; } }

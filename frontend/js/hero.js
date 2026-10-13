@@ -26,6 +26,7 @@ function initHero() {
   const hero = document.querySelector('[data-bfl-hero]');
   if (!hero) return;
   const scenes = [...hero.querySelectorAll('.bfl-hero__scene')];
+  const steamVideo = hero.querySelector('[data-bfl-steam-video]');
   const dots = [...hero.querySelectorAll('[data-bfl-slide]')];
   const story = hero.querySelector('.bfl-hero__story');
   const headline = hero.querySelector('[data-bfl-headline]');
@@ -38,16 +39,25 @@ function initHero() {
   let visible = true;
   let timer = null;
 
+  function syncSteam() {
+    if (!steamVideo) return;
+    const mayPlay = current === 0 && !mediaMotion.matches && !document.hidden && visible;
+    if (mayPlay) { const attempt = steamVideo.play(); if (attempt?.catch) attempt.catch(() => {}); }
+    else steamVideo.pause();
+  }
   const stop = () => { if (timer !== null) clearInterval(timer); timer = null; };
   const start = () => {
     stop();
     if (!mediaMotion.matches && !document.hidden && visible)
       timer = window.setInterval(() => activate(current + 1), SLIDE_DURATION);
+    syncSteam();
   };
   function activate(index, manual = false) {
     current = (index + SLIDES.length) % SLIDES.length;
     const slide = SLIDES[current];
     scenes.forEach((scene, i) => scene.classList.toggle('is-active', i === current));
+    if (current === 0 && steamVideo && index !== 0) steamVideo.currentTime = 0;
+    syncSteam();
     dots.forEach((dot, i) => {
       const selected = i === current;
       dot.classList.toggle('is-active', selected);
