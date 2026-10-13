@@ -248,6 +248,12 @@ table.data tr:last-child td { border-bottom: none; }
 .page-hero { padding: 2.6rem 0 1.2rem; }
 .page-hero p { max-width: 40rem; }
 
+/* Compact + slim hero variants — same design language as the homepage hero */
+.hero-compact .hero-grid { padding: 2.6rem 0 2.2rem; }
+.hero-compact .hero-media img { height: clamp(180px, 24vw, 250px); }
+.hero-slim .hero-grid { grid-template-columns: 1fr; padding: 2.2rem 0 1.8rem; }
+.hero-slim .hero-copy p { max-width: 40rem; }
+
 /* Detail layout */
 .detail-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: start; }
 .detail-grid img.cover { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); aspect-ratio: 4 / 3; object-fit: cover; }
