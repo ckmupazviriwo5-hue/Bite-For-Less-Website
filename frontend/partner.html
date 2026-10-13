@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Partner with Bite For Less — list surplus food and reach local shoppers." />
+  <title>Become a Partner | Bite For Less</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <div class="container page-hero">
+      <span class="eyebrow">For business owners</span>
+      <h1>Partner with Bite For Less</h1>
+      <p>Bakeries, grocery stores, restaurants and markets: list surplus food as limited-time deals, reach nearby shoppers and waste less.</p>
+    </div>
+
+    <div class="container section" style="padding-top:0">
+      <div class="split">
+        <div class="reveal">
+          <ul class="check-list">
+            <li>Publish flash deals in minutes</li>
+            <li>Track reservations as they come in</li>
+            <li>Verify pickups with simple PIN codes</li>
+            <li>Keep food moving instead of binning it</li>
+          </ul>
+          <p class="muted small">Applications are reviewed before a vendor account is activated. Selling food remains your responsibility, including safety and hygiene.</p>
+        </div>
+        <form class="form-card reveal" id="partnerForm" aria-label="Partner application">
+          <h3>Apply for approval</h3>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="field">Shop name<input name="shop_name" required maxlength="80" /></label>
+              <label class="field">Owner name<input name="owner_name" required maxlength="80" /></label>
+            </div>
+            <div class="form-row">
+              <label class="field">Email<input type="email" name="email" required maxlength="120" /></label>
+              <label class="field">Phone<input type="tel" name="phone" required maxlength="30" /></label>
+            </div>
+            <label class="field">Address<input name="address" required maxlength="160" /></label>
+            <label class="field">About your business<textarea name="business_info" rows="3" maxlength="500" placeholder="What do you sell? When is surplus available?"></textarea></label>
+            <div><button class="btn btn-primary" type="submit">Send application</button></div>
+            <div class="status" id="partnerStatus" role="status"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/config.js"></script>
+  <script type="module" src="/js/partner-page.js"></script>
+</body>
+</html>

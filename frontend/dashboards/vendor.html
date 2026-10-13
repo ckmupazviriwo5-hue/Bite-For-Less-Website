@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Vendor dashboard — listings, reservations and pickups." />
+  <title>Vendor Dashboard | Bite For Less</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <div class="container section">
+      <span class="eyebrow">Vendor dashboard</span>
+      <h1 id="shopTitle">My shop</h1>
+      <div class="dash-grid mt">
+        <nav class="dash-nav" aria-label="Dashboard">
+          <a href="vendor.html" aria-current="page">Overview</a>
+          <a href="#listings">Listings</a>
+          <a href="#incoming">Reservations</a>
+          <a href="#verify">Verify pickup</a>
+        </nav>
+        <div>
+          <div class="stat-grid" id="statGrid"></div>
+          <section class="panel" id="listings" aria-labelledby="listH">
+            <h3 id="listH">My listings</h3>
+            <div class="table-wrap"><table class="data" id="listingTable">
+              <thead><tr><th>Item</th><th>Price</th><th>Left</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </section>
+          <section class="panel" aria-labelledby="createH">
+            <h3 id="createH">Create listing</h3>
+            <form id="dealForm" class="form-grid">
+              <input type="hidden" name="id" id="dealId" />
+              <div class="form-row">
+                <label class="field">Food name<input name="food_name" required maxlength="80" /></label>
+                <label class="field">Category
+                  <select name="category"><option>Bakery</option><option>Restaurant</option><option>Grocery</option><option>Fruits &amp; Vegetables</option><option>Meals</option><option>Drinks</option><option>Snacks</option><option>Other</option></select>
+                </label>
+              </div>
+              <div class="form-row">
+                <label class="field">Original price (ZMW)<input type="number" name="original_price" step="0.01" min="0.01" required /></label>
+                <label class="field">Sale price (ZMW)<input type="number" name="discounted_price" step="0.01" min="0.01" required /></label>
+              </div>
+              <div class="form-row">
+                <label class="field">Quantity<input type="number" name="quantity" min="1" step="1" required /></label>
+                <label class="field">Expires at<input type="datetime-local" name="expires_at" required /></label>
+              </div>
+              <label class="field">Image URL (optional)<input type="url" name="image_url" maxlength="300" /></label>
+              <label class="field">Description<textarea name="description" rows="2" maxlength="500"></textarea></label>
+              <div class="row-actions">
+                <button class="btn btn-primary" type="submit" id="dealSubmit">Publish listing</button>
+                <button class="btn btn-secondary" type="button" id="dealReset" hidden>Cancel edit</button>
+              </div>
+              <div class="status" id="dealStatus" role="status"></div>
+            </form>
+          </section>
+          <section class="panel" id="incoming" aria-labelledby="inH">
+            <h3 id="inH">Incoming reservations</h3>
+            <div class="table-wrap"><table class="data" id="resTable">
+              <thead><tr><th>Code</th><th>Qty</th><th>Total</th><th>Status</th><th>Expires</th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </section>
+          <section class="panel" id="verify" aria-labelledby="verH">
+            <h3 id="verH">Verify pickup</h3>
+            <form id="verifyForm" class="form-grid">
+              <div class="form-row">
+                <label class="field">Reservation code or ID<input name="reservation_ref" required maxlength="80" /></label>
+                <label class="field">Pickup PIN<input name="pickup_pin" required maxlength="10" /></label>
+              </div>
+              <div><button class="btn btn-primary" type="submit">Confirm pickup</button></div>
+              <div class="status" id="verifyStatus" role="status"></div>
+            </form>
+          </section>
+          <section class="panel" aria-labelledby="bizH">
+            <h3 id="bizH">Business profile</h3>
+            <div id="bizBox"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/config.js"></script>
+  <script type="module" src="/js/dash-vendor.js"></script>
+</body>
+</html>

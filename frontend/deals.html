@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse live surplus food deals from local vendors." />
+  <title>Browse Deals | Bite For Less</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <div class="container page-hero">
+      <span class="eyebrow">Marketplace</span>
+      <h1>Browse deals</h1>
+      <p>Live surplus listings. Search, filter and sort — availability updates as food is reserved.</p>
+    </div>
+    <div class="container section" style="padding-top:0">
+      <div class="toolbar" role="search" aria-label="Deal search and filters">
+        <input type="search" id="q" placeholder="Search food or vendor…" aria-label="Search food or vendor" />
+        <select id="fCategory" aria-label="Filter by category">
+          <option value="all">All categories</option>
+          <option>Bakery</option><option>Restaurant</option><option>Grocery</option>
+          <option>Fruits &amp; Vegetables</option><option>Meals</option><option>Drinks</option>
+          <option>Snacks</option><option>Other</option>
+        </select>
+        <select id="fSort" aria-label="Sort deals">
+          <option value="ending">Ending soon</option>
+          <option value="discount">Biggest discount</option>
+          <option value="priceAsc">Price: low to high</option>
+          <option value="priceDesc">Price: high to low</option>
+        </select>
+      </div>
+      <p class="muted small" id="resultCount" aria-live="polite"></p>
+      <div id="dealGrid" class="deal-grid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/config.js"></script>
+  <script type="module" src="/js/deals-page.js"></script>
+</body>
+</html>
