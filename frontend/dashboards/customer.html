@@ -38,13 +38,26 @@
             <h3 id="historyH">History</h3>
             <div id="historyList"></div>
           </section>
-          <section class="panel" aria-labelledby="profileH">
-            <h3 id="profileH">Profile</h3>
-            <div id="profileBox"></div>
-          </section>
-          <section class="panel" aria-labelledby="savedH">
+          <section class="panel" id="saved" aria-labelledby="savedH">
             <h3 id="savedH">Saved deals</h3>
-            <div class="empty">Saved deals are not supported by the current backend — browse <a href="/deals.html">live deals</a> instead.</div>
+            <div id="savedList" class="deal-grid"></div>
+          </section>
+          <section class="panel" aria-labelledby="notifH">
+            <h3 id="notifH">Notifications</h3>
+            <div id="notifList"></div>
+            <div class="row-actions"><button class="btn btn-ghost btn-sm" id="readAllBtn" type="button">Mark all read</button></div>
+          </section>
+          <section class="panel" id="profile" aria-labelledby="profileH">
+            <h3 id="profileH">Profile &amp; security</h3>
+            <div id="profileBox"></div>
+            <form id="passwordForm" class="form-grid">
+              <div class="form-row">
+                <label class="field">Current password<input type="password" name="current_password" required minlength="6" autocomplete="current-password" /></label>
+                <label class="field">New password<input type="password" name="new_password" required minlength="6" autocomplete="new-password" /></label>
+              </div>
+              <div><button class="btn btn-secondary btn-sm" type="submit">Change password</button></div>
+              <div class="status" id="passwordStatus" role="status"></div>
+            </form>
           </section>
         </div>
       </div>

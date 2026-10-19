@@ -15,15 +15,20 @@ export function supabaseConfig() {
   return { url: url.replace(/\/$/, ''), key };
 }
 
-async function sbGet(path) {
+async function sbGet(path, timeoutMs = 15000) {
   const { url, key } = supabaseConfig();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   let res;
   try {
     res = await fetch(`${url}/rest/v1/${path}`, {
+      signal: controller.signal,
       headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' }
     });
   } catch {
     throw new Error('Cannot reach the marketplace server. Check your connection and try again.');
+  } finally {
+    clearTimeout(timer);
   }
   if (res.status === 401 || res.status === 403) {
     throw new Error('Marketplace access was refused. Please try again later.');
@@ -149,7 +154,15 @@ export function normalizeListing(row) {
 
 export function eligibilityState(deal, now = Date.now()) {
   if (!deal) return 'missing';
-  if (deal.listing_status !== 'active' || deal.vendor_status !== 'approved') return 'paused';
+  // Both data models must evaluate correctly:
+  //  - Supabase rows carry listing_status + vendor_status (RLS-verified).
+  //  - Express/SQLite rows carry status and NO vendor_status; the public
+  //    catalog endpoint already restricts rows to approved shops, so a missing
+  //    vendor_status must NOT fail the check (it would wrongly disable every
+  //    express-mode Reserve button).
+  const listingActive = (deal.listing_status || deal.status) === 'active';
+  const vendorApproved = deal.vendor_status === undefined || deal.vendor_status === null || deal.vendor_status === 'approved';
+  if (!listingActive || !vendorApproved) return 'paused';
   if (deal.expires_at && !(new Date(deal.expires_at).getTime() > now)) return 'expired';
   if (!(Number(deal.quantity_remaining) > 0)) return 'soldout';
   return 'bookable';

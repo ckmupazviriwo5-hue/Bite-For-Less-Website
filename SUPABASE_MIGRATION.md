@@ -66,3 +66,35 @@ Keep names where possible so the website adapter and Android models stay aligned
 1. `frontend/js/config.js` + APK coming-soon button (explicitly approved pattern) — frontend-only.
 2. `TECH_STACK.md` (deps + licenses + binary-removal note).
 3. Express bug fixes that migration depends on (cancel-restore, route order, idempotency) — each reported before applying.
+
+## 8. Website Auth migration plan (prepared 2026-10-14, NOT implemented)
+
+Live catalog already reads Supabase (`DATA_BACKEND: 'supabase'`, `supabase-catalog.js`).
+Accounts/reservations still need Express locally. Migration steps for the website:
+
+1. **One Supabase Auth login for all users.** Keep `login.html` as-is (email + password,
+   no role picker). Swap `auth-page.js` to `supabase-js signInWithPassword`; keep the
+   role-based redirect, but source the role from `public.profiles.role` for the
+   authenticated user — never from client storage.
+2. **Role mapping.** `customer` → customer dashboard; `shop_owner` linked via
+   `shops.owner_id = profiles.id` → vendor dashboard; `admin` via profiles flag/claim →
+   admin dashboard. New public signups insert `profiles{role:'customer'}` only; vendor
+   promotion = approved application linked to a user (server-side); admin promotion never public.
+3. **Session management.** supabase-js persists the session (localStorage) and refreshes
+   tokens; `layout.js requireRole()` calls `supabase.auth.getUser()` + profiles lookup on
+   every dashboard load. Logout = `supabase.auth.signOut()` + redirect home.
+4. **Reads.** Public listings keep using the anon key + current PostgREST selects
+   (already RLS-safe). No service-role key, no secrets in `config.js` — only
+   `SUPABASE_URL` + publishable key (both already present and client-safe).
+5. **Writes (reservations/vendor/admin).** All stock and status transitions move to
+   `SECURITY DEFINER` RPCs (`reserve_deal`, `cancel_reservation`, `verify_pickup`,
+   `upsert_listing`, `review_application`) so RLS stays deny-by-default; the website
+   never writes inventory columns directly. Until RPCs exist and are tested, mutating
+   actions keep throwing the current honest "needs the legacy local server" error —
+   never a fake success.
+6. **Error handling.** Reuse the existing `api()` shape: network/timeout → connection
+   message; 401/refresh failure → redirect to login; RLS 403 → permission message.
+   No stack traces or keys in UI copy.
+7. **Cutover rule.** One writable backend at a time. Express stays for local demo until
+   the Supabase RPC suite passes the ported lifecycle tests; then the website flips and
+   Express is retired from the path — never dual-write inventory.

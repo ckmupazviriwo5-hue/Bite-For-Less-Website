@@ -1,5 +1,11 @@
 // Workflow integration tests — run against an ISOLATED temp database + throwaway
 // server on port 5001. Never touches backend/data/biteforless.db or :5000.
+//
+// IMPORTANT: DATABASE_URL is set BEFORE loading any module that imports
+// config/db.js. Static ESM imports are hoisted above module code, so a static
+// `import ... helpers.js` here would open the REAL database before the env
+// override runs (bug fixed 2026-10; see PROJECT_AUDIT.md). All db-touching
+// modules therefore load dynamically after the env is set.
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import os from 'node:os';
@@ -13,7 +19,7 @@ const TEST_DB = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bfl-test-')), '
 process.env.DATABASE_URL = `sqlite:${TEST_DB}`;
 
 const { default: db } = await import('../config/db.js');
-import { makeId } from '../utils/helpers.js';
+const { makeId } = await import('../utils/helpers.js');
 
 let server;
 const BASE = `http://localhost:${TEST_PORT}`;
@@ -203,11 +209,13 @@ test('shop profile endpoint resolves the right record', async () => {
   assert.equal(me.payload.shop.id, ids.shop1);
 });
 
-test('admin stats require admin; shop apply + approve flow works', async () => {
+test('admin stats require admin; vendor apply + approve/reject/suspend flow works', async () => {
   await api('GET', '/api/admin/statistics', { expect: 401 });
   await api('GET', '/api/admin/statistics', { token: tokens.custA, expect: 403 });
   const stats = await api('GET', '/api/admin/statistics', { token: tokens.admin, expect: 200 });
-  assert.equal(typeof stats.payload.statistics.total_users, 'number');
+  assert.equal(typeof stats.payload.statistics.users_total, 'number');
+
+  // Guest/top-level application route (legacy alias) creates a pending shop.
   const applied = await api('POST', '/api/shops/apply', {
     body: { shop_name: 'New Shop', owner_name: 'New Owner', email: 'newshop@bfl.test', phone: '+260', address: 'Cairo Rd', business_info: 'demo' },
     expect: 201
@@ -217,11 +225,19 @@ test('admin stats require admin; shop apply + approve flow works', async () => {
     body: { shop_name: 'Dup', owner_name: 'X', email: 'newshop@bfl.test', phone: '+260', address: 'Y' },
     expect: 409
   });
-  const apps = (await api('GET', '/api/admin/applications', { token: tokens.admin, expect: 200 })).payload.applications;
-  const pending = apps.find((a) => a.email === 'newshop@bfl.test');
+
+  // Canonical contract: GET /api/admin/vendors, PATCH /api/admin/vendors/:id/status.
+  const vendors = (await api('GET', '/api/admin/vendors?status=pending', { token: tokens.admin, expect: 200 })).payload.vendors;
+  const pending = vendors.find((a) => a.email === 'newshop@bfl.test');
+  assert.ok(pending, 'new application must appear in pending vendors');
   assert.equal(pending.status, 'pending');
-  await api('PATCH', `/api/admin/applications/${pending.id}`, { token: tokens.admin, body: { status: 'bogus' }, expect: 400 });
-  await api('PATCH', '/api/admin/applications/shop_missing', { token: tokens.admin, body: { status: 'approved' }, expect: 404 });
-  await api('PATCH', `/api/admin/applications/${pending.id}`, { token: tokens.admin, body: { status: 'approved' }, expect: 200 });
+  await api('PATCH', `/api/admin/vendors/${pending.id}/status`, { token: tokens.admin, body: { status: 'bogus' }, expect: 400 });
+  await api('PATCH', '/api/admin/vendors/shop_missing/status', { token: tokens.admin, body: { status: 'approved' }, expect: 404 });
+  await api('PATCH', `/api/admin/vendors/${pending.id}/status`, { token: tokens.admin, body: { status: 'approved' }, expect: 200 });
   assert.equal(db.prepare('SELECT status FROM shops WHERE id = ?').get(pending.id).status, 'approved');
+  await api('PATCH', `/api/admin/vendors/${pending.id}/status`, { token: tokens.admin, body: { status: 'suspended' }, expect: 200 });
+  const suspended = db.prepare('SELECT status FROM shops WHERE id = ?').get(pending.id);
+  assert.equal(suspended.status, 'suspended');
+  // Suspension pauses any active listings of that shop immediately.
+  await api('GET', '/api/admin/vendors', { token: tokens.custA, expect: 403 });
 });

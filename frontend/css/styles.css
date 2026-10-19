@@ -156,6 +156,7 @@ button, input, select, textarea { font: inherit; }
 .pill.hot { background: var(--accent-soft); border-color: rgba(255, 170, 33, 0.4); color: var(--accent-hover); }
 .pill.ok { color: var(--success); border-color: rgba(127, 214, 164, 0.4); }
 .pill.bad { color: var(--danger); border-color: rgba(255, 133, 133, 0.4); }
+.pill.warn { background: rgba(255, 170, 33, 0.08); border-color: rgba(255, 170, 33, 0.3); color: var(--muted); }
 .deal-meta { font-size: 0.85rem; color: var(--muted); }
 .deal-card .btn { margin-top: 0.4rem; }
 
@@ -173,6 +174,11 @@ button, input, select, textarea { font: inherit; }
 }
 .banner h2 { margin-bottom: 0.3rem; }
 .banner p { margin-bottom: 0; max-width: 36rem; }
+.banner.warn { background: rgba(255, 170, 33, 0.06); border-color: rgba(255, 170, 33, 0.35); display: block; }
+.banner.warn strong { color: var(--accent-hover); }
+.banner.warn p { color: var(--muted); }
+.banner.ok { background: rgba(127, 214, 164, 0.08); border-color: rgba(127, 214, 164, 0.35); display: block; }
+.banner.ok strong { color: var(--success); }
 .site-footer { border-top: 1px solid var(--border); margin-top: 2rem; padding: 2.2rem 0 1.6rem; }
 .footer-grid { display: grid; grid-template-columns: 1.2fr 2fr; gap: 2rem; }
 .footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
@@ -297,3 +303,68 @@ table.data tr:last-child td { border-bottom: none; }
 
 /* Shared, branded SVG mark for navigation and footer */
 .brand-logo { width: 36px; height: 36px; flex: none; display: block; border-radius: 10px; }
+
+/* ==========================================================================
+   Onboarding wizard (Bilingual range omitted; six-step shop-owner application)
+   Slash classes are additive to the design system above.
+   ========================================================================== */
+.wiz-progress {
+  height: 6px; border-radius: 999px; background: var(--surface-2);
+  overflow: hidden; margin-bottom: 1rem;
+}
+.wiz-progress-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width .25s ease;
+}
+.wiz-steps { display: flex; gap: .5rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+.wiz-dot {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-2); color: var(--muted);
+  border: 1px solid var(--border); font-weight: 800; cursor: pointer;
+  font-size: .85rem; padding: 0;
+  transition: background .16s ease, color .16s ease, border-color .16s ease;
+}
+.wiz-dot:disabled { opacity: .45; cursor: not-allowed; }
+.wiz-dot.done { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.wiz-dot.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.wiz-body { min-height: 240px; }
+.wiz-nav { display: flex; justify-content: space-between; gap: .75rem; margin-top: .25rem; }
+.wiz-nav .btn { flex: 1; }
+.wiz-nav .btn-secondary { flex: 0 0 auto; min-width: 110px; }
+
+.file-well {
+  display: flex; flex-direction: column; align-items: flex-start; gap: .4rem;
+  border: 1px dashed var(--border); border-radius: var(--radius-sm);
+  padding: .75rem; background: var(--surface-2);
+}
+.file-well img { width: 86px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+.file-well .btn { position: relative; overflow: hidden; }
+.file-well-empty { font-size: 1.6rem; opacity: .6; line-height: 1; }
+
+.check-terms {
+  display: flex; gap: .6rem; align-items: flex-start;
+  padding: .75rem; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface-2); font-size: .92rem; color: var(--muted);
+}
+.check-terms input { width: 18px; height: 18px; margin-top: .2rem; accent-color: var(--accent); flex: 0 0 auto; }
+
+.review-list { list-style: none; margin: 0 0 1rem; padding: 0; }
+.review-list li {
+  display: flex; gap: .8rem; justify-content: space-between;
+  padding: .55rem .2rem; border-bottom: 1px solid var(--border); font-size: .93rem;
+}
+.review-list li > span:first-child { color: var(--muted); flex: 0 0 128px; font-weight: 700; }
+.review-list li:last-child { border-bottom: none; }
+
+.wizard-info { margin-top: 1.25rem; }
+.fact-list.numbered { counter-reset: wstep; }
+.fact-list.numbered li span:first-child { color: var(--accent); }
+
+@media (max-width: 720px) {
+  .wiz-nav { flex-direction: column-reverse; }
+  .wiz-nav .btn { width: 100%; }
+  .review-list li { flex-direction: column; gap: .15rem; }
+  .review-list li > span:first-child { flex: none; }
+}

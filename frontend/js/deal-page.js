@@ -33,6 +33,7 @@ function facts(d) {
         <div class="deal-price"><span class="price-big">${formatZMW(d.discounted_price)}</span><s class="muted">${formatZMW(d.original_price)}</s></div>
         <p class="mt"><span class="pill hot">Save ${formatZMW(savings)} (−${pct}%)</span>
         <span class="pill">${esc(bookable ? countdown(d.expires_at) : eligibilityLabel(d))}</span></p>
+        <p class="mt"><button class="btn btn-secondary btn-sm" id="saveDeal" type="button"${tokenStore.get() ? '' : ' disabled'}>☆ Save to my dashboard</button></p>
         <ul class="fact-list">
           <li><span>Available</span><span>${d.quantity_remaining} of ${d.quantity}</span></li>
           <li><span>Category</span><span>${esc(d.category || 'Other')}</span></li>
@@ -82,7 +83,26 @@ if (!id) {
     box.innerHTML = facts(deal);
     document.title = `${deal.food_name} | Bite For Less`;
     const form = document.getElementById('reserveForm');
-    if (!form) return; // Supabase mode: catalog only, no reservation form rendered.
+    const saveBtn = document.getElementById('saveDeal');
+    if (saveBtn && tokenStore.get()) {
+      // Reflect existing favorites truthfully (saved once, toggle never lies).
+      const { favorites } = await api('/favorites', { auth: true }).catch(() => ({ favorites: [] }));
+      if ((favorites || []).some((f) => f.deal_id === deal.id)) {
+        saveBtn.textContent = '★ Saved — open dashboard';
+        saveBtn.onclick = () => { location.href = '/dashboards/customer.html#saved'; };
+      } else {
+        saveBtn.addEventListener('click', async () => {
+          try {
+            await api('/favorites', { method: 'POST', auth: true, body: { deal_id: deal.id } });
+            saveBtn.textContent = '★ Saved — open dashboard';
+            saveBtn.onclick = () => { location.href = '/dashboards/customer.html#saved'; };
+          } catch (err) {
+            setStatus(document.getElementById('reserveStatus'), err.message, 'err');
+          }
+        });
+      }
+    }
+    if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const status = document.getElementById('reserveStatus');
@@ -102,6 +122,7 @@ if (!id) {
         setStatus(status, err.message, 'err');
       }
     });
+    }
   } catch (err) {
     box.innerHTML = `<div class="error-box">${esc(err.message)} <a href="/deals.html">Back to deals</a>.</div>`;
   }

@@ -24,15 +24,26 @@
       <div class="dash-grid">
         <nav class="dash-nav" aria-label="Dashboard">
           <a href="admin.html" aria-current="page">Overview</a>
-          <a href="#approvals">Approvals</a>
+          <a href="#approvals">Vendor approvals</a>
           <a href="#listings">Listings</a>
           <a href="#users">Users</a>
+          <a href="#reservations">Reservations</a>
+          <a href="#categories">Categories</a>
+          <a href="#announcements">Announcements</a>
           <a href="#reviews">Reviews</a>
+          <a href="#activity">Activity</a>
         </nav>
         <div>
           <div class="stat-grid" id="statGrid"></div>
           <section class="panel" id="approvals" aria-labelledby="apH">
             <h3 id="apH">Vendor approvals</h3>
+            <div class="row-actions" id="vendorFilter">
+              <button class="btn btn-secondary btn-sm" data-vf="" type="button">All</button>
+              <button class="btn btn-secondary btn-sm" data-vf="pending" type="button">Pending</button>
+              <button class="btn btn-secondary btn-sm" data-vf="approved" type="button">Approved</button>
+              <button class="btn btn-secondary btn-sm" data-vf="rejected" type="button">Rejected</button>
+              <button class="btn btn-secondary btn-sm" data-vf="suspended" type="button">Suspended</button>
+            </div>
             <div id="appList"></div>
           </section>
           <section class="panel" id="listings" aria-labelledby="liH">
@@ -44,19 +55,57 @@
           </section>
           <section class="panel" id="users" aria-labelledby="usH">
             <h3 id="usH">Customers &amp; vendors</h3>
+            <form id="userSearch" class="form-grid">
+              <div class="form-row">
+                <label class="field">Search by name or email<input name="q" maxlength="80" placeholder="e.g. chisomo" /></label>
+                <label class="field">Role
+                  <select name="role"><option value="">All roles</option><option value="customer">customer</option><option value="shop_owner">shop_owner</option><option value="admin">admin</option></select>
+                </label>
+              </div>
+              <div><button class="btn btn-secondary btn-sm" type="submit">Search</button></div>
+            </form>
             <div class="table-wrap"><table class="data" id="userTable">
-              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
               <tbody></tbody>
             </table></div>
+          </section>
+          <section class="panel" id="reservations" aria-labelledby="resH">
+            <h3 id="resH">All reservations</h3>
+            <div class="table-wrap"><table class="data" id="resTable">
+              <thead><tr><th>Code</th><th>Customer</th><th>Shop</th><th>Qty</th><th>Total</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </section>
+          <section class="panel" id="categories" aria-labelledby="catH">
+            <h3 id="catH">Categories</h3>
+            <form id="categoryForm" class="form-row">
+              <label class="field">New category name<input name="name" maxlength="60" required /></label>
+              <div><button class="btn btn-secondary btn-sm" type="submit">Add category</button></div>
+            </form>
+            <div id="categoryList"></div>
+          </section>
+          <section class="panel" id="announcements" aria-labelledby="annH">
+            <h3 id="annH">Announcements</h3>
+            <form id="announcementForm" class="form-grid">
+              <div class="form-row">
+                <label class="field">Title<input name="title" maxlength="100" required /></label>
+                <label class="field">Audience
+                  <select name="audience"><option value="all" selected>All users</option><option value="customers">Customers</option><option value="shop_owners">Shop owners</option></select>
+                </label>
+              </div>
+              <label class="field">Message<textarea name="body" rows="2" maxlength="500" required></textarea></label>
+              <div><button class="btn btn-secondary btn-sm" type="submit">Publish announcement</button></div>
+              <div class="status" id="announcementStatus" role="status"></div>
+            </form>
+            <div id="announcementList"></div>
           </section>
           <section class="panel" id="reviews" aria-labelledby="revH">
             <h3 id="revH">Reviews</h3>
             <div id="reviewList"></div>
-            <p class="small muted">Review moderation is not supported by the current backend — reviews are shown as submitted.</p>
           </section>
-          <section class="panel" aria-labelledby="resH">
-            <h3 id="resH">Reservations</h3>
-            <div class="empty">A platform-wide reservation overview is not supported by the current backend.</div>
+          <section class="panel" id="activity" aria-labelledby="actH">
+            <h3 id="actH">System activity</h3>
+            <div id="activityList"></div>
           </section>
         </div>
       </div>

@@ -1,20 +1,22 @@
-// Bite For Less — single client configuration point.
-// APK distribution: versioned assets on GitHub Releases in the Android repo
-// (https://github.com/ckmupazviriwo5-hue/BiteForLess-).
-// Until a verified release-asset URL exists, keep APK_URL empty/falsy so the
-// UI shows a polished "coming soon" state instead of a broken download.
-// Only public, client-safe values belong here. Never put service-role keys,
-// database passwords, or JWT secrets in this file.
+// Bite For Less â€” single client configuration point.
+// Local-first architecture: every page talks to the Express + SQLite API that
+// serves it (same origin), so no absolute URLs or secrets are needed in the
+// browser. Only public, client-safe values belong here. Never put service-role
+// keys, database passwords, or JWT secrets in this file.
+//
+// APK distribution policy: Android builds are published as versioned GitHub
+// Releases by the Android repository. The website never hosts APK binaries.
+// If/when a verified release exists, APK_URL may point directly at the asset;
+// otherwise the button stays disabled and is driven by the release lookup.
 window.BFL_CONFIG = {
   API_BASE: '/api',
-  // Website-served file (copied from the Android project's verified local build).
-  // Replace with a versioned GitHub Release asset URL when publishing officially.
-  APK_URL: '/downloads/app-debug.apk',
+  APK_URL: '',
   APK_RELEASES_URL: 'https://github.com/ckmupazviriwo5-hue/BiteForLess-/releases',
-  // Marketplace reads: shared Supabase backend (public project URL +
-  // publishable key only — safe for browser code, RLS enforced server-side).
-  SUPABASE_URL: 'https://ktvlytdmjqkcdeahgdqy.supabase.co',
-  SUPABASE_ANON_KEY: 'sb_publishable_ZdqDZK5Q2hCjSorTOMQweA_P1JQZgHw',
-  // 'supabase' = live catalog via Supabase; 'express' = legacy local backend.
-  DATA_BACKEND: 'supabase'
+  // Data backend: 'express' = the local Express/SQLite API (canonical).
+  // 'supabase' = legacy shared catalog mode, retained only as an explicitly
+  // selectable fallback; the Supabase project itself is untouched/deprecated
+  // for app traffic. Never enable it without the public keys present.
+  DATA_BACKEND: 'express',
+  SUPABASE_URL: '',
+  SUPABASE_ANON_KEY: ''
 };

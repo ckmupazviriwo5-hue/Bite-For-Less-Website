@@ -126,44 +126,17 @@ export function setStatus(el, message, kind = '') {
   el.className = `status ${kind}`;
 }
 
-// APK download: configurable URL, honest coming-soon state otherwise.
+// APK distribution: official builds ship via the Android repo's GitHub
+// Releases. The website hosts no binaries and shows no coming-soon modals —
+// the footer link is only rendered when a verified APK URL is configured.
 function renderApkFooterSlot() {
   const slot = document.getElementById('apkFooterSlot');
   if (!slot) return;
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.className = 'btn btn-ghost btn-sm';
-  btn.textContent = 'Android app';
-  btn.addEventListener('click', () => showApkModal());
-  slot.appendChild(btn);
-}
-
-export function showApkModal(cfg = window.BFL_CONFIG || {}) {
-  const url = ((cfg.APK_URL || '')).trim();
-  if (url) { window.open(url, '_blank', 'noopener'); return; }
-  const releases = cfg.APK_RELEASES_URL || 'https://github.com/ckmupazviriwo5-hue/BiteForLess-/releases';
-  const modal = document.createElement('div');
-  modal.className = 'modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-label', 'Android app coming soon');
-  modal.innerHTML = `
-    <div class="modal-card">
-      <button class="modal-close" type="button" aria-label="Close">×</button>
-      <span class="eyebrow">Android app</span>
-      <h3>Coming soon</h3>
-      <p class="muted">The verified Android build will be published as a versioned GitHub Release. Nothing to download yet — no demo file, no placeholders.</p>
-      <div class="row-actions">
-        <button class="btn btn-primary btn-sm" type="button" data-act="releases">View Releases page</button>
-        <button class="btn btn-secondary btn-sm" type="button" data-act="close">Close</button>
-      </div>
-    </div>`;
-  const close = () => modal.remove();
-  modal.querySelector('[data-act="close"]').addEventListener('click', close);
-  modal.querySelector('.modal-close').addEventListener('click', close);
-  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
-  modal.querySelector('[data-act="releases"]').addEventListener('click', () => {
-    window.open(releases, '_blank', 'noopener');
-    close();
-  });
-  document.body.appendChild(modal);
+  const url = ((window.BFL_CONFIG || {}).APK_URL || '').trim();
+  if (!url) return;
+  const a = document.createElement('a');
+  a.className = 'btn btn-ghost btn-sm';
+  a.href = url;
+  a.textContent = 'Android app';
+  slot.appendChild(a);
 }

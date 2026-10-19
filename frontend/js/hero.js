@@ -100,21 +100,45 @@ function initAppInstall() {
   const button = document.querySelector('[data-bfl-install]');
   const note = document.querySelector('[data-bfl-install-note]');
   const dialog = document.getElementById('bflAppDialog');
-  const modalCopy = dialog?.querySelector('[data-bfl-dialog-copy]');
   if (!button || !note) return;
-  let apkUrl = null;
-  let failure = false;
-  dialog?.querySelector('[data-bfl-close]')?.addEventListener('click', () => dialog.close());
-  dialog?.addEventListener('click', (event) => {
-    if (event.target === dialog) dialog.close();
-  });
-  button.addEventListener('click', () => {
-    if (apkUrl) { window.location.assign(apkUrl); return; }
-    if (modalCopy) modalCopy.textContent = failure
-      ? 'We cannot check the Android release status right now. Visit GitHub Releases for the latest official builds.'
-      : 'No official Bite For Less Android APK has been published yet. Check GitHub Releases for the first verified download.';
-    dialog?.showModal();
-  });
+  const enable = (noteText) => {
+    button.disabled = false;
+    button.removeAttribute('aria-disabled');
+    button.innerHTML = 'Install Now <span aria-hidden="true">\u2193</span>';
+    note.textContent = noteText;
+  };
+  const disable = () => {
+    button.disabled = true;
+    button.setAttribute('aria-disabled', 'true');
+    button.textContent = 'Install App';
+    note.textContent = 'Official Android build not published yet.';
+  };
+  const closeDialog = () => {
+    dialog?.querySelector('[data-bfl-close]')?.addEventListener('click', () => dialog.close());
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+  };
+
+  // A configured, verified file takes precedence over the GitHub lookup.
+  const configuredUrl = ((window.BFL_CONFIG && window.BFL_CONFIG.APK_URL) || '').trim();
+  if (configuredUrl) {
+    closeDialog();
+    enable('Direct download · Official Bite For Less build (.apk)');
+    button.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = configuredUrl;
+      a.setAttribute('download', '');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+    return;
+  }
+
+  // Official policy: the Install App button is only ever enabled by a verified
+  // GitHub Release APK asset. With no eligible release the button simply stays
+  // disabled — no coming-soon modal and no placeholder explanations.
+  disable();
+  closeDialog();
   fetch(RELEASES_API, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } })
     .then(async (response) => {
       if (response.status === 404) return null; // No published full release yet
@@ -128,20 +152,11 @@ function initAppInstall() {
       return asset ? { url: asset.browser_download_url, version: release.tag_name || 'latest' } : null;
     })
     .then((apk) => {
-      if (apk) {
-        apkUrl = apk.url;
-        button.innerHTML = 'Install Now <span aria-hidden="true">↓</span>';
-        note.textContent = 'Android ' + apk.version + ' · Official GitHub Release (.apk)';
-      } else {
-        button.textContent = 'Android app · Coming soon';
-        note.textContent = 'No published Android APK yet. We will link the first official release here.';
-      }
+      if (!apk) return; // stays disabled, no further UI claims
+      enable('Android ' + apk.version + ' · Official GitHub Release (.apk)');
+      button.addEventListener('click', () => window.location.assign(apk.url), { once: true });
     })
-    .catch(() => {
-      failure = true;
-      button.textContent = 'Check Android release';
-      note.textContent = 'Release status is temporarily unavailable. Check the official GitHub Releases page.';
-    });
+    .catch(() => { /* release status unverifiable — the button stays disabled */ });
 }
 
 initHero();

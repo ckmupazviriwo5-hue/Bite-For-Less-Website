@@ -8,3 +8,18 @@ backend/data/*.db-journal
 .DS_Store
 coverage/
 *.log
+supabase/.temp/
+backend/data/backups/
+backend/data/.jwt-secret
+backend/uploads/products/
+backend/uploads/logos/
+backend/uploads/covers/
+backend/uploads/profiles/
+# Never publish APK binaries from this repo — official builds ship via the
+# Android repo's GitHub Releases only.
+frontend/downloads/
+
+backend/uploads/
+*.sqlite
+*.sqlite3
+db/*.sqlite

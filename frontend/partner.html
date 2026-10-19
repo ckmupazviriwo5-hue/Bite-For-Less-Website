@@ -19,7 +19,7 @@
           <h1>Partner with Bite For Less</h1>
           <p class="lead">Bakeries, grocery stores, restaurants and markets: list surplus food as limited-time deals, reach nearby shoppers and waste less.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#partnerForm">Apply now</a>
+            <a class="btn btn-primary" href="#onboardingApp">Apply now</a>
             <a class="btn btn-secondary" href="/how-it-works.html">How it works</a>
           </div>
         </div>
@@ -40,25 +40,21 @@
             <li>Verify pickups with simple PIN codes</li>
             <li>Keep food moving instead of binning it</li>
           </ul>
-          <p class="muted small">Applications are reviewed before a vendor account is activated. Selling food remains your responsibility, including safety and hygiene.</p>
-        </div>
-        <form class="form-card reveal" id="partnerForm" aria-label="Partner application">
-          <h3>Apply for approval</h3>
-          <div class="form-grid">
-            <div class="form-row">
-              <label class="field">Shop name<input name="shop_name" required maxlength="80" /></label>
-              <label class="field">Owner name<input name="owner_name" required maxlength="80" /></label>
-            </div>
-            <div class="form-row">
-              <label class="field">Email<input type="email" name="email" required maxlength="120" /></label>
-              <label class="field">Phone<input type="tel" name="phone" required maxlength="30" /></label>
-            </div>
-            <label class="field">Address<input name="address" required maxlength="160" /></label>
-            <label class="field">About your business<textarea name="business_info" rows="3" maxlength="500" placeholder="What do you sell? When is surplus available?"></textarea></label>
-            <div><button class="btn btn-primary" type="submit">Send application</button></div>
-            <div class="status" id="partnerStatus" role="status"></div>
+          <p class="muted small">Applications are reviewed by an administrator before a vendor account is activated. Selling safe food remains your responsibility.</p>
+          <div class="panel wizard-info">
+            <h3>How approval works</h3>
+            <ol class="fact-list numbered">
+              <li><span>Step 1</span><span>Submit the six-step application here.</span></li>
+              <li><span>Step 2</span><span>Your shop appears as <strong>pending</strong> — you can complete your profile.</span></li>
+              <li><span>Step 3</span><span>An administrator approves the shop.</span></li>
+              <li><span>Step 4</span><span>Publish listings and start rescuing surplus food.</span></li>
+            </ol>
           </div>
-        </form>
+        </div>
+        <div class="form-card reveal" id="onboardingApp" aria-label="Shop owner onboarding">
+          <noscript><p class="error-box">The application wizard needs JavaScript enabled.</p></noscript>
+          <!-- The six-step wizard is rendered here by /js/partner-page.js -->
+        </div>
       </div>
     </div>
   </main>

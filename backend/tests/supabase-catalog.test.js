@@ -47,6 +47,21 @@ test('eligibility: bookable vs soldout vs expired vs paused', () => {
   for (const s of ['bookable', 'soldout', 'expired', 'paused']) {
     void s;
   }
+  // Express/SQLite deal shape (no listing_status/vendor_status fields) must
+  // stay bookable — this is the bug that disabled every express-mode
+  // Reserve button with "Temporarily unavailable".
+  const expressDeal = (over = {}) => ({
+    id: 'd1', status: 'active', quantity_remaining: 4,
+    expires_at: '2026-10-13T22:00:00.000Z', ...over
+  });
+  assert.equal(eligibilityState(expressDeal(), NOW), 'bookable');
+  assert.equal(eligibilityState(expressDeal({ quantity_remaining: 0 }), NOW), 'soldout');
+  assert.equal(eligibilityState(expressDeal({ expires_at: '2026-10-13T10:00:00.000Z' })), 'expired');
+  assert.equal(eligibilityState(expressDeal({ status: 'paused' })), 'paused');
+  assert.equal(eligibilityLabel(expressDeal(), NOW), 'Available for reservation');
+  assert.equal(eligibilityLabel(expressDeal({ status: 'paused' })), 'Temporarily unavailable');
+  // Explicit vendor rejection must still block supabase-shaped rows.
+  assert.equal(eligibilityState(normalizeListing(row({ vendors: { name: 'X', status: 'rejected' } })), NOW), 'paused');
   assert.equal(eligibilityLabel(normalizeListing(row()), NOW), 'Available for reservation');
   assert.equal(eligibilityLabel(normalizeListing(row({ stock: 0 })), NOW), 'Sold out');
 });
@@ -79,7 +94,7 @@ test('price formatting is ZMW and discount math is consistent', () => {
 });
 
 test('countdown and esc behave safely', () => {
-  assert.equal(countdown(new Date(Date.now() + 7200e3).toISOString()), '2h 0m left');
+  assert.equal(countdown(new Date(Date.now() + 7770e3).toISOString()), '2h 9m left');
   assert.equal(countdown(new Date(NOW - 1000).toISOString()), 'Expired');
   assert.equal(countdown(null), 'Expired');
   assert.equal(esc('<b>"x"&'), '&lt;b&gt;&quot;x&quot;&amp;');

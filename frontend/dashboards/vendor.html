@@ -27,8 +27,10 @@
           <a href="#listings">Listings</a>
           <a href="#incoming">Reservations</a>
           <a href="#verify">Verify pickup</a>
+          <a href="#profile">Business profile</a>
         </nav>
         <div>
+          <div id="approvalBanner"></div>
           <div class="stat-grid" id="statGrid"></div>
           <section class="panel" id="listings" aria-labelledby="listH">
             <h3 id="listH">My listings</h3>
@@ -55,7 +57,12 @@
                 <label class="field">Quantity<input type="number" name="quantity" min="1" step="1" required /></label>
                 <label class="field">Expires at<input type="datetime-local" name="expires_at" required /></label>
               </div>
-              <label class="field">Image URL (optional)<input type="url" name="image_url" maxlength="300" /></label>
+              <div class="form-row">
+                <label class="field" id="imageFileField">Product photo <span class="muted small">(JPG/PNG/WebP/GIF, ≤5 MB)</span>
+                  <input type="file" name="image" id="dealImage" accept="image/jpeg,image/png,image/webp,image/gif" />
+                </label>
+                <label class="field" id="imageUrlField" hidden>Image URL (replacing an existing photo)<input type="url" name="image_url" maxlength="300" placeholder="/uploads/products/…" /></label>
+              </div>
               <label class="field">Description<textarea name="description" rows="2" maxlength="500"></textarea></label>
               <div class="row-actions">
                 <button class="btn btn-primary" type="submit" id="dealSubmit">Publish listing</button>
@@ -67,7 +74,7 @@
           <section class="panel" id="incoming" aria-labelledby="inH">
             <h3 id="inH">Incoming reservations</h3>
             <div class="table-wrap"><table class="data" id="resTable">
-              <thead><tr><th>Code</th><th>Qty</th><th>Total</th><th>Status</th><th>Expires</th></tr></thead>
+              <thead><tr><th>Code</th><th>Customer</th><th>Qty</th><th>Total</th><th>Status</th><th>Expires</th></tr></thead>
               <tbody></tbody>
             </table></div>
           </section>
@@ -82,9 +89,55 @@
               <div class="status" id="verifyStatus" role="status"></div>
             </form>
           </section>
-          <section class="panel" aria-labelledby="bizH">
+          <section class="panel" id="profile" aria-labelledby="bizH">
             <h3 id="bizH">Business profile</h3>
             <div id="bizBox"></div>
+            <form id="profileForm" class="form-grid" hidden style="margin-top:0.75rem">
+              <div class="form-row">
+                <label class="field">Shop name<input name="name" maxlength="80" required /></label>
+                <label class="field">Phone<input name="phone" maxlength="30" /></label>
+              </div>
+              <div class="form-row">
+                <label class="field">WhatsApp<input name="whatsapp_number" maxlength="30" /></label>
+                <label class="field">Business type<input name="business_type" maxlength="60" /></label>
+              </div>
+              <label class="field">Description<textarea name="description" rows="2" maxlength="500"></textarea></label>
+              <label class="field">Pickup address<input name="address" maxlength="160" /></label>
+              <div class="form-row">
+                <label class="field">City<input name="city" maxlength="60" /></label>
+                <label class="field">Area<input name="area" maxlength="60" /></label>
+              </div>
+              <div class="form-row">
+                <label class="field">Business hours<input name="opening_hours" maxlength="80" /></label>
+                <label class="field">Pickup window (start–end)
+                  <span class="row-actions"><input type="time" name="pickup_window_start" /> <input type="time" name="pickup_window_end" /></span>
+                </label>
+              </div>
+              <label class="field">Pickup instructions<textarea name="pickup_instructions" rows="2" maxlength="300"></textarea></label>
+              <div class="row-actions">
+                <button class="btn btn-primary" type="submit">Save profile</button>
+                <button class="btn btn-secondary" type="button" id="profileCancel" hidden>Close</button>
+              </div>
+              <div class="status" id="profileStatus" role="status"></div>
+            </form>
+            <div class="row-actions" style="margin-top:0.75rem">
+              <button class="btn btn-secondary btn-sm" id="editProfileBtn" type="button">Edit business profile</button>
+            </div>
+            <div class="form-row" style="margin-top:0.75rem">
+              <label class="field">Shop logo <span class="muted small">(JPG/PNG/WebP/GIF, ≤5 MB)</span>
+                <input type="file" id="logoFile" accept="image/jpeg,image/png,image/webp,image/gif" />
+              </label>
+              <label class="field">Cover photo <span class="muted small">(shown on your public shop card)</span>
+                <input type="file" id="coverFile" accept="image/jpeg,image/png,image/webp,image/gif" />
+              </label>
+            </div>
+            <div class="row-actions"><button class="btn btn-secondary btn-sm" id="imageUploadBtn" type="button">Upload logo/cover selection</button></div>
+            <div class="status" id="imageStatus" role="status"></div>
+          </section>
+          <section class="panel" id="alerts" aria-labelledby="alertsH">
+            <h3 id="alertsH">Notifications</h3>
+            <div id="alertList"></div>
+            <div class="row-actions"><button class="btn btn-ghost btn-sm" id="readAllBtn" type="button">Mark all read</button></div>
           </section>
         </div>
       </div>

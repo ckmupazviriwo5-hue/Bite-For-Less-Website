@@ -76,3 +76,54 @@ directory (dev database and dev server untouched by tests). No commits, pushes, 
 15/15 tests green, dev DB migrated with data preserved (3 users / 1 shop / 1 deal), no secrets in diff
 (scanned), no customer data beyond local demo seeds, dev server healthy on :5000, docs updated.
 Push will carry the staged WAL untracking + all fixes above — review `git status`/`git diff --cached` before publishing.
+
+---
+
+## 7. Addendum — 2026-10-18: verification pass (automated tests + real browser evidence)
+
+Server under test: `http://localhost:5000` (local SQLite mode). Screenshots archived in
+`%TEMP%\opencode\bfl-qa\` (qa-home, qa-deals, qa-deal-detail2, qa-home-mobile, qa-deals-mobile,
+qa-login, nav-700, probe-492, dash-{admin,vendor,customer,customer-live}). No commits/pushes/deploys.
+
+### 7.1 Automated results — 42/42 pass, 0 fail
+`node --test` (every suite on isolated temp DBs; real dev DB + :5000 untouched):
+workflows (:5001), vendor-onboarding (:5002), core, pages, supabase-catalog.
+
+### 7.2 Browser evidence (Edge headless, local server only)
+- Storefront: hero + steam video + carousel render; Install App button correctly DISABLED with
+  "Official Android build not published yet."; 15 live deals on /deals.html with ZMW prices,
+  discount badges, countdowns, real /uploads/demo photos; deal detail shows countdown pill and
+  an ACTIVE Reserve button after fix #4 below.
+- Live-session dashboards (token injected via a temporary helper page calling the real login
+  API — helper since removed): admin = populated stats + vendor approvals with owner data;
+  vendor = 6/7 listings table with Edit/Deactivate; customer = history + unread alerts.
+- Role guard: a customer token on /dashboards/admin.html auto-redirects to the customer
+  dashboard (screenshot).
+- Round-trip on the REAL dev DB: reserve 2 × Butter Croissants (`customer@example.com`) →
+  `BFL-3B320454`, PIN 1887, K 70.00, stock 6→4; cancel → stock exactly 6. Customer dashboard
+  history and admin reservations both reflect it; 1 unread alert created.
+
+### 7.3 Bugs found during this pass — all fixed and re-verified
+1. `vendors.js` missing `signToken` export → boot crash (fixed: exported).
+2. `reviews.js` admin `?all=1` empty WHERE → HTTP 500, empty body; also aborted the whole
+   admin dashboard load chain ("API endpoint not found." + empty tables) (fixed: `WHERE 1=1`).
+3. `dash-vendor.js` missing `{ deals }` braces → listings table always empty despite 200 with
+   7 rows (fixed: array destructured).
+4. `supabase-catalog.js` `eligibilityState` needed Supabase-only fields → every express-mode
+   deal page showed "Temporarily unavailable" and disabled Reserve (fixed: model-aware check
+   + express-shape regression tests in supabase-catalog.test.js).
+5. Ops: 16 expired demo listings revived by the new idempotent seed-refresh (fresh 6h window).
+
+### 7.4 QA-tooling footnotes (so nobody "re-fixes" these)
+- Headless Edge on this Windows machine renders a 492-CSS-px viewport for `--window-size=390`
+  (DPI scaling) and the PNG crops at 390 physical px — this caused a FALSE "mobile nav toggle
+  missing" report. DOM dump + computed style + 492-width screenshot + click-through shot prove
+  the hamburger renders at the header's right edge and opens the drawer correctly.
+- CSP (`script-src 'self'`) blocks inline-module probes; QA probes must be external .js files.
+- express.static heuristic caching can serve stale JS to a REUSED headless profile — use a
+  fresh `--user-data-dir` per fix-verification run.
+
+### 7.5 Verdict
+Local demo is presentation-ready: 42/42 tests, all storefront paths + all three dashboards
+verified against the real SQLite data, honest labels everywhere (estimates, pickup ≠ payment).
+The remaining action — git commit/push — stays gated on explicit user approval.

@@ -76,6 +76,30 @@ export async function currentUser() {
   return payload.user;
 }
 
+/**
+ * Multipart upload helper (image files etc.). Sends FormData exactly as given
+ * (never JSON-stringified) with the JSON-compatible error handling of api().
+ * Used for product photos, shop logos and covers after the canonical POST
+ * /api/vendors/register returns the first session token.
+ */
+export async function apiUpload(path, formData, { auth = true } = {}) {
+  const headers = {};
+  if (auth) {
+    const token = tokenStore.get();
+    if (!token) throw new Error('Please log in to continue.');
+    headers.Authorization = `Bearer ${token}`;
+  }
+  let res;
+  try {
+    res = await fetch(`${base()}${path}`, { method: 'POST', headers, body: formData });
+  } catch {
+    throw new Error('Cannot reach the server. Check your connection and try again.');
+  }
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(payload.message || `Upload failed (${res.status}).`);
+  return payload;
+}
+
 export function formatZMW(value) {
   return Number(value).toLocaleString('en-ZM', { style: 'currency', currency: 'ZMW' });
 }

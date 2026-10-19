@@ -2,6 +2,41 @@
 
 Date: 2026-10-12. Status: **Phase 1 (audit) done; implementation NOT started.** No commits/pushes/deploys. Awaiting architecture + stack/design decisions (§1).
 
+---
+
+# STATUS UPDATE (2026-10-18) — local-mode implementation COMPLETE (uncommitted)
+
+Decision taken (per user master brief): **Option A** in §1 — keep + repair/complete the
+Express + SQLite backend; local single-API architecture; no hosted database in the
+active path; premium design preserved. All numbered phases below are executed; the
+current session's scope is tracked against the master brief phases instead:
+
+| Master-brief phase | State | Evidence |
+|----|-------|----------|
+| 1 Local Express+SQLite reset | ✅ done | `server.js` boots on :5000; `config/db.js` WAL + additive migrations; rebuild-loop bug fixed |
+| 2 Supabase retirement (active paths) | ✅ done | `frontend/js/config.js` `DATA_BACKEND:'express'`; adapter only as documented fallback; hosted project untouched |
+| 3 Landing + premium design | ✅ preserved | existing hero/layout kept; APK modal/release URL policy intact |
+| 4 Unified auth, role-free UI | ✅ done | `login.html` has no role selector; server-decided role (`auth-page.js`); suspended disabled enforced per-request; pending can sign in but can't publish |
+| 5 Vendor onboarding wizard | ✅ done | `partner.html` + `partner-page.js` six steps, draft persistence, pending-state routing; backend `POST /api/vendors/register` transactional; approval activates pending owners |
+| 6 Vendor dashboard | ✅ done | approval banner + publish gate, listings CRUD incl. own paused (`/deals/mine`), profile edit, logo/cover uploads, alerts, labelled ZMW stats |
+| 7 Customer dashboard | ✅ done | reservations + PIN cards + cancel, favorites, notifications (read/read-all), change password |
+| 8 Admin dashboard | ✅ done | stats, approvals, listing moderation, user suspension, reservations, categories, announcements, review moderation, activity trail |
+| 9 Image uploads (disk, safe) | ✅ done | multer disk storage, random names, magic-byte sniff, ≤5 MB, ownership checks; verified via integration tests |
+| 10 Website page wiring | ✅ done | all pages consume `/api` (`frontend/js/api.js` single client); deal detail bookings + favorites; QR/PIN pickup confirmation |
+| 11 Demo data (ZMW) + ops | ✅ done | idempotent seed refreshes seeded deal deadlines; backups; `db-inspect`/`boot-probe`/cleanup scripts; `start.bat`; docs |
+| 12 Tests | ✅ 42/42 | workflows + onboarding + core + pages + catalog suites, isolated temp DBs, real-DB guard |
+| 13 Docs & handoff | ✅ done | `docs/LOCAL_API_CONTRACT.md` (READY), `docs/LOCAL_DEMO_SETUP.md`, `docs/PRESENTATION_GUIDE.md`, audit addendum |
+| 14 QA matrix | ✅ documented | manual browser matrix (no browser automation available) in PRESENTATION_GUIDE |
+
+**Not yet done (explicit):** commit/push (awaiting explicit user approval); shared-network
+password change for admin; browser screenshot pass.
+
+---
+
+# ORIGINAL PHASE-1 PLAN (historical)
+
+Date: 2026-10-12. Status: **Phase 1 (audit) done; implementation NOT started.** No commits/pushes/deploys. Awaiting architecture + stack/design decisions (§1).
+
 ## 1. Decisions needed before building (please answer)
 
 1. **Architecture — biggest fork.** Master prompt §5/§8 says local-only, no backend/auth/payments. The repo already ships an Express + SQLite + JWT backend (~80% of customer/vendor/admin flows). Options:
